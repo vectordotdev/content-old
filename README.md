@@ -16,3 +16,7 @@ Branch: `snippet/[snippet-description]`
 ### Code
 
 Example code from any projects created for the above.
+
+### Authors
+
+You can add your twitter/medium/github accounts, bio ,and profile photo in a markdown file called your-name.md and you'll automatically have your content attributed to and linked to your various profiles.
