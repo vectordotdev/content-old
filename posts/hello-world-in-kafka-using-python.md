@@ -1,7 +1,48 @@
-We currently live in an era of `Microservices` where `Service Oriented Architecture` (SOA) and `Representational State Transfer` (REST) are some of the popular architecture patterns to designing distributed systems.
+# Hello world Kafka using Python
 
-As the name suggests, these systems are distributed and spread across multiple servers in the cloud thereby creating an obvious need for a dependable and efficient inter-services communications platform that can support the scalibility of current product architectures and the agility of our development. Hence, [Kafka](https://kafka.apache.org/) which is a popular distributed streaming platform built by Apache Software Foundation.
+Howdy! Welcome to blog series by Timber.io on various tools and technologies. 
 
+This blog is for you if you've,
+
+- Ever marvelled what is Kafka? 
+- Heard of streaming/queueing/messaging systems but wondering why should one use it? 
+- What are the true benifits of using them?
+- How would it fit with your current backend architecture? 
+- You might be just eager to get started with using Kafka! 
+
+<Illustration>
+
+## What is this blog about ? 
+You might have got a hint of it already. This blog is about understanding what is Kafka, apprehending the need for a tool like Kafka and then getting started with it using Python.
+
+---
+## What is Kafka? Why should one use it?
+In short, Kafka is a distributed streaming and message queueing platform.
+
+> Oh wait! What does that even mean? How different is it from traditional databases? 
+
+
+Simplified explanation of what are streaming and messaging queues and how they are different from traiditional databases.
+
+
+> That sounds convincing! But why would one need a system like this?
+
+
+## Simplifying the backend architecture.
+
+
+
+![Without Kafka](https://www.confluent.io/wp-content/uploads/streaming_platform_rev.png)
+
+
+![With Kafka](https://www.confluent.io/wp-content/uploads/confluent_platform_diagram.png)
+
+## Adding extensibility for your current backend
+Recover from failures, rebuild existing databases add new systems with less time and effort by using Kafka as the true source od data.
+
+## Add more reasons for choosing Kafka and how would it help in a very simple and understandable manner
+
+## 
 # Getting Started with Kafka
 
 ## Installation
