@@ -1,14 +1,14 @@
-# Hello world Kafka using Python
+# Hello world in Kafka using Python
 
-Howdy! Welcome to blog series by Timber.io on various tools and technologies. 
+Howdy! Welcome to blog series by Timber.io on various tools and technologies.
 
 This blog is for you if you've,
 
 - Ever marvelled what is Kafka? 
 - Heard of streaming/queueing/messaging systems but wondering why should one use it? 
-- What are the true benifits of using them?
+- What are the true benefits of using them?
 - How would it fit with your current backend architecture? 
-- You might be just eager to get started with using Kafka! 
+- You might just be eager to get started with using Kafka! 
 
 <Illustration>
 
@@ -19,30 +19,36 @@ You might have got a hint of it already. This blog is about understanding what i
 ## What is Kafka? Why should one use it?
 In short, Kafka is a distributed streaming and message queueing platform.
 
-> Oh wait! What does that even mean? How different is it from traditional databases? 
+> Oh wait! What does that even mean?
 
+A streaming platform is a system that can perform the following:
+1. Store and process streams of data in real time
+2. Allow applications and/or services to publish and subscribe to these data streams at scale
 
-Simplified explanation of what are streaming and messaging queues and how they are different from traiditional databases.
+> Interesting! How different or similar is it from traditional databases?
 
+Kafka is NOT a database. Nevertheless, it has few similarities and quite an amount of differences with respect to traditional databases.
+
+Like traditional databases, you can store data into Kafka which can be persistent, checksummed and replicated for fault tolerance. This is one reason why Kafka is not just a message queue but a streaming platform. In addition, Kafka has something called as topics which is similar to tables in PostgreSQL or collections in MongoDB. 
+
+Unlike traditional databases, Kafka deals with real time data that can be published or consumed by multiple applications at the same time. Alongside, Kafka allows you to process the data streams but this is totally different when compared to performing CRUD operations or running simple to complex queries on traditional databases. 
 
 > That sounds convincing! But why would one need a system like this?
 
+### 1. Simplify the backend architecture
 
-## Simplifying the backend architecture.
+Look at how a complex architecture can be simplified and streamlined with the help of Kafka
 
+![Without Kafka](https://www.confluent.io/wp-content/uploads/data-flow-ugly-1-768x427.png "Without Kafka")
 
+![With Kafka](https://www.confluent.io/wp-content/uploads/data-flow-768x584.png "With Kafka")
 
-![Without Kafka](https://www.confluent.io/wp-content/uploads/streaming_platform_rev.png)
+### 2. Universal pipeline of data
 
+Kafka is build for scale and thus it ensures that the data is always reliable at any point in time. It also supports strong mechanisms for recovery from failures.
 
-![With Kafka](https://www.confluent.io/wp-content/uploads/confluent_platform_diagram.png)
+All these features allow Kafka to become the true source of data or a universal pipeline of data for your architecture. This will enable you to easily add new services and applications to your existing infrastructure or even allow you to rebuild existing databases or migrate legacy systems with less time and effort.
 
-## Adding extensibility for your current backend
-Recover from failures, rebuild existing databases add new systems with less time and effort by using Kafka as the true source od data.
-
-## Add more reasons for choosing Kafka and how would it help in a very simple and understandable manner
-
-## 
 # Getting Started with Kafka
 
 ## Installation
@@ -103,7 +109,7 @@ Creating a producer and consumer can be a perfect `Hello, World!` example to lea
 
 While each of them have their own set of advantages and disadvantages, we will be making use of `kafka-python` in this blog to achieve a simple producer and consumer setup in kafka using python.
 
-# Hello, World!
+# Kafka with Python
 
 Before you get started with the following examples, ensure that you have `kafka-python` installed in your system:
 
