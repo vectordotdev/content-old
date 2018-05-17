@@ -23,11 +23,11 @@ In short, Kafka is a distributed streaming platform.
 
 In order to understand what is a streaming platform, let us start by taking a simple example. Consider that you have a simple web application which consists of an interative UI, a web server and a database. This is how it would look like:
 
-<illustration>
+![Simple Architecture](../images/kafka-image-one.jpg)
 
 Now, imagine that you have a need to record all the events such as clicks, requests, impressions and searches that take place on your web application and store them for metric computation, reporting and different kinds of analysis each of which is done by separate applications or services. A simple solution would be to store the data in your database and connect all other applications and services to your database.
 
-<illustration>
+![Simple Architecture](../images/kafka-image-two.jpg)
 
 This might look simple but your solution is not complete. There are multiple challenges when trying to solve this problem. Let us try to understand some of them:
 
@@ -62,8 +62,7 @@ Kafka is a distributed platform and build for scale. It ensures that the data is
 
 Considering the same example as mentioned above, look at how a complex architecture can be simplified and streamlined with the help of Kafka
 
-<illustration>
-<illustration>
+![Simple Architecture](../images/kafka-image-three.jpg)
 
 ### 2. Universal pipeline of data
 
@@ -160,7 +159,7 @@ for message in consumer:
     print (message)
 ```
 
-## Kafka Consumer
+## Kafka Producer
 
 Now that we have a consumer listening to us, let us create a producer which generates messages that are published to Kafka and thereby consumed by our consumer created earlier:
 
