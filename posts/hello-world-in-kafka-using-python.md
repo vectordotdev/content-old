@@ -12,8 +12,10 @@ This blog is for you if you've,
 
 <Illustration>
 
+_Just a disclaimer: we're a logging company here @ Timber. We'd love it if you tried out our product (it's seriously great!), but that's all we're going to advertise our product ... you guys came here to learn about Kafka and this guide won't disappoint._
+
 ## What is this blog about ? 
-You might have got a hint of it already. This blog is about understanding what is Kafka, apprehending the need for a tool like Kafka and then getting started with it using Python.
+You might have got a hint of it already. This blog is about understanding what is Kafka, apprehending the need for a tool like Kafka and then getting started with it using Python. We're believers that the best way to learn something is to do it, so get out your terminal and your favorite code editor and get ready. 
 
 ---
 ## What is Kafka? Why should one use it?
@@ -21,53 +23,52 @@ In short, Kafka is a distributed streaming platform.
 
 > Oh wait! What does that even mean?
 
-In order to understand what is a streaming platform, let us start by taking a simple example. Consider that you have a simple web application which consists of an interative UI, a web server and a database. This is how it would look like:
+Imagine that you have a simple web application which consists of an interative UI, a web server and a database. 
 
 ![Simple Architecture](../images/kafka-image-one.jpg)
 
-Now, imagine that you have a need to record all the events such as clicks, requests, impressions and searches that take place on your web application and store them for metric computation, reporting and different kinds of analysis each of which is done by separate applications or services. A simple solution would be to store the data in your database and connect all other applications and services to your database.
+You need to record all the events such as clicks, requests, impressions and searches that take place on your web application and store them for computation, reporting and analysis, each of which is done by separate applications or services. A simple solution would be to store the data in your database and connect all other applications and services to your database.
 
 ![Simple Architecture](../images/kafka-image-two.jpg)
 
-This might look simple but your solution is not complete. There are multiple challenges when trying to solve this problem. Let us try to understand some of them:
+This might look simple, but you're not finished. There are multiple challenges that can arise. 
 
-1. Events like clicks, requests, impressions and searches results in high frequency interaction/requests or data flow to your webserver and your primary database which is meant to serve your product features may be equipped to store high frequency writes or scale seamlessly and this would introduce high latencies as more and more events pour in to the server.
-2. If you still go ahead and store high frequency in database systems like SQL or Mongo it would be really hard to introduce and reconstruct a new system or a database on all of the historical data.You pretty much lose the flexibility to extend the capabilities of your system by introducing new techologies.
+1. Events like clicks, requests, impressions and searches results in high frequency interaction/requests or data flow to your webserver and your primary database may not be equipped to scale seamlessly. This could introduce high latencies as more and more events pour in to the server.
+2. If you go ahead and store high frequency data in database systems like SQL or Mongo, it would be hard to introduce and reconstruct a new system or a database on all of the historical data. You lose the flexibility to extend the capabilities of your system by introducing new techologies.
 3. What if you have data processing systems in place to process these events to gain deeper insights? Since these systems wouldn't be capable of handling high frequency reads and you wouldn't have access to the true source of data it is practically impossible to experiment with various data processing, machine learning algorithms on all of the data.
-3. Each of the above applications, whether they are producing the data or consuming the data, might follow their own data formats which means that you will need additional systems for data transformations when there is exchange of data across these applications and your database.
-
+3. Each application can follow their own data formats, which means that you will need systems for data transformations when there is exchange of data across these applications.
 
 All these problems can be better addressed by bringing a streaming platform like Kafka into the picture. A streaming platform is a system that can perform the following:
 
 1. Store huge amount of data that can be persistent, checksummed and replicated for fault tolerance 
-2. Process data streams in real time. Data streams are nothing but continuous flow of data across systems
-3. Allow one or more applications to publish data or data streams independently and agnostic of which other application or service is going to consuming it and in what point in time
+2. Process continuous flow of data (data streams) in real time across systems
+3. Allow applications to publish data or data streams independently and agnostic to the application / service consuming it
 
 > Interesting! How different or similar is it from traditional databases?
 
 Although Kafka can store persistent data, it is NOT a database.
 
-Kafka just not allows applications to push or pull continuous flow of data but also deals with processing them to build and support real time applications. This is totally different when compared to performing CRUD operations on passive data or running simple to complex queries on traditional databases. 
+Kafka not only allows applications to push or pull continuous flow of data, but also deals with processing them to build and support real time applications. This is different than performing CRUD operations on passive data or running queries on traditional databases. 
 
 > That sounds convincing! But how does Kafka solve the above mentioned challenges and why would one need a system like this?
 
-Kafka is a distributed platform and built for scale, which means it can handle sky-high frequency reads and writes + it can store huge volumes of data. It ensures that the data is always reliable at any point in time. It also supports strong mechanisms for recovery from failures. Besides these, here are some of key aspects on why one should be using Kafka:
+Kafka is a distributed platform and built for scale, which means it can handle sky-high frequency reads and writes & store huge volumes of data. It ensures that the data is always reliable. It also supports strong mechanisms for recovery from failures. Here are some of key aspects on why one should be using Kafka:
 
 ### 1. Simplify the backend architecture
 
-Considering the same example as mentioned above, look at how a complex architecture can be simplified and streamlined with the help of Kafka
+Look at how a complex architecture can be simplified and streamlined with the help of Kafka
 
 ![Simple Architecture](../images/kafka-image-three.jpg)
 
 ### 2. Universal pipeline of data
 
-As you can see above, Kafka acts as a universal data pipeline across multiple applications and services. This gives us two advantages. The first one is data integration. We have all the data from all different systems residing at one single place thus making Kafka a true source of data. Any application can now push data to this one platform which can later be pulled by any other application as and when required. This also gives us our next advantage which is ease in exchanging data across applications. Since, we have all the data at one place, we can standardise the data format that we will be using for the plaform which will reduce our data transformations when there is to and fro of data across applications.
+As you can see above, Kafka acts as a universal data pipeline across multiple applications and services. This gives us two advantages. The first one is data integration. We have all the data from all different systems residing at a single place making Kafka a true source of data. Any application can push data to this platform which can later be pulled by another application. This also gives us our next advantage which is ease in exchanging data across applications. Since, we have all the data at one place, we can standardise the data format that we will be using for the plaform which can reduce our data transformations.
 
-### 3. Kafka Connect
+### 3. Connects to existing systems
 
-Although, Kafka allows you to have a standard data format, it does not mean that applications do not require data transformations at all. It definitely allows us to reduce the overall number of data transformations in our architecture but there might be cases when we will still require them. Consider the example of connecting a legacy system to your architecture which does not know about Kafka? In such cases, Kafka offers a framework called as Kafka Connect for us to connect to existing systems and databases thereby maintaining the universal data pipeline.
+Although, Kafka allows you to have a standard data format, it does not mean that applications do not require data transformations. It allows us to reduce the overall number of data transformations in our architecture, but there might be cases when we require transformations. Consider the example of connecting a legacy system to your architecture which does not know about Kafka? In such cases, Kafka offers a framework called Kafka Connect for us to connect to existing systems maintaining the universal data pipeline.
 
-### 4. Kafka Streams
+### 4. Process data in real-time
 
 A real time application usually requires continuous flow of data which can be processed immediately or within the current span of time with reduced latency. Kafka Streams makes it possible for us to build, package and deploy such applications without any need for separate stream processors or heavy and expensive infrastructure.
 
@@ -87,7 +88,7 @@ Installing Kafka is a fairly simple process. Just follow the given steps below:
 
 ## Starting the Server
 
-Kafka makes use something called as ZooKeeper which is a centralized service for a distributed environment like Kafka. It offers configuration service, synchronisation service and naming registry for large distributed systems. You can read more about it [here](https://zookeeper.apache.org/). 
+Kafka makes use something called ZooKeeper which is a centralized service for a distributed environment like Kafka. It offers configuration service, synchronisation service, and a naming registry for large distributed systems. You can read more about it [here](https://zookeeper.apache.org/). 
 
 Thus, we need to first start the ZooKeeper server followed by the Kafka server. This can be achieved using the following commands:
 
