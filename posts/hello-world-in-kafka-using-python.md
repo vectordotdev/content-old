@@ -31,16 +31,11 @@ Now, imagine that you have a need to record all the events such as clicks, reque
 
 This might look simple but your solution is not complete. There are multiple challenges when trying to solve this problem. Let us try to understand some of them:
 
-1. Storing the events is not a one time write operation but rather a continuous flow of data which will only increase when you are trying to build a real time application
-2. We have a completely different application producing these data streams which is agnostic of when and what other applications or services is going to consume it
-3. Each of the above applications, whether they are producing the data or consuming the data, might follow their own data formats which means that you will need additional systems for data transformations when there is exchange of data across these applications and your database
+1. Events like clicks, requests, impressions and searches results in high frequency interaction/requests or data flow to your webserver and your primary database which is meant to serve your product features may be equipped to store high frequency writes or scale seamlessly and this would introduce high latencies as more and more events pour in to the server.
+2. If you still go ahead and store high frequency in database systems like SQL or Mongo it would be really hard to introduce and reconstruct a new system or a database on all of the historical data.You pretty much lose the flexibility to extend the capabilities of your system by introducing new techologies.
+3. What if you have data processing systems in place to process these events to gain deeper insights? Since these systems wouldn't be capable of handling high frequency reads and you wouldn't have access to the true source of data it is practically impossible to experiment with various data processing, machine learning algorithms on all of the data.
+3. Each of the above applications, whether they are producing the data or consuming the data, might follow their own data formats which means that you will need additional systems for data transformations when there is exchange of data across these applications and your database.
 
-All these challenges, will make us question the following:
-
-1. Can my server and database manage the given data flow control?
-2. How do I handle so many data transformations across so many applications?
-3. How to build a strong yet simple architecture that is scalable in nature?
-4. How easily can I upgrade existing applications or add new services to my current architecture?
 
 All these problems can be better addressed by bringing a streaming platform like Kafka into the picture. A streaming platform is a system that can perform the following:
 
@@ -56,7 +51,7 @@ Kafka just not allows applications to push or pull continuous flow of data but a
 
 > That sounds convincing! But how does Kafka solve the above mentioned challenges and why would one need a system like this?
 
-Kafka is a distributed platform and build for scale. It ensures that the data is always reliable at any point in time. It also supports strong mechanisms for recovery from failures. Besides these, here are some of key aspects on why one should be using Kafka:
+Kafka is a distributed platform and built for scale, which means it can handle sky-high frequency reads and writes + it can store huge volumes of data. It ensures that the data is always reliable at any point in time. It also supports strong mechanisms for recovery from failures. Besides these, here are some of key aspects on why one should be using Kafka:
 
 ### 1. Simplify the backend architecture
 
@@ -92,7 +87,7 @@ Installing Kafka is a fairly simple process. Just follow the given steps below:
 
 ## Starting the Server
 
-Kafka makes use of something called as ZooKeeper which is a centralized service for a distributed environment like Kafka. It offers configuration service, synchronisation service and naming registry for large distributed systems. You can read more about it [here](https://zookeeper.apache.org/). 
+Kafka makes use something called as ZooKeeper which is a centralized service for a distributed environment like Kafka. It offers configuration service, synchronisation service and naming registry for large distributed systems. You can read more about it [here](https://zookeeper.apache.org/). 
 
 Thus, we need to first start the ZooKeeper server followed by the Kafka server. This can be achieved using the following commands:
 
