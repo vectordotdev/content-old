@@ -1,10 +1,6 @@
 ﻿
 # Create a Native Application for any Website
 
-When I first found [this package](https://github.com/jiahaog/nativefier) on Github, I thought I had found a new way to create Electron apps (completing missing the fact that the page has nearly 15000 stars). *Nativefier* is a tool that allows you to create a native application on Windows, MacOS, or Linux using the command line with minimal configuration.
-
-Not too long ago, developers disliked Electron apps because they were slower, less power efficient, used a ton of memory, and didn't offer the same features as native applications. Now, many companies use Electron who still manage to provide an incredible user experience, such as Slack and WhatsApp.
-
 ### Installation
 First, add Nativefier globally (*-g* flag) using NPM (Node Package Manager)
 ```bash
