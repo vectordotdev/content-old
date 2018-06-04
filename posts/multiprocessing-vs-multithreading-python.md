@@ -7,7 +7,7 @@ _Just a disclaimer: we're a logging company here @ Timber. We'd love it if you t
 
 We're creating this guide because when we went looking for the difference between threading and multiprocessing, we found the information out there unnecessarily difficult to understand. They went far too in-depth, without really touching the meat of the information that would help us decide what to use and how to implement it.
 
-## What is Threading and why do you want it
+## What is Threading? Why might you want it?
 
 By nature, Python is a linear language, but the threading module comes in handy when you want a little more processing power. While threading in Python cannot be used for parallel CPU computation, it's perfect for I/O operations such as web scraping because the processor is sitting idle waiting for data.
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
 ```
 If you've never seen `if __name__ == '__main__':` before, it's basically a way to make sure the code that's nested inside it will only run if the script is run directly (not imported).
 
-#### The Lock
+### The Lock
 You'll often want your threads to be able to use or modify variables common between threads but to do that you'll have to use something known as a `lock`. Whenever a function wants to modify a variable, it locks that variable. When another function wants to use a variable, it must wait until that variable is unlocked.
 
 ![Lock Explanation](/images/multiprocessing-vs-multithreading-python/lockExplanation.jpeg)
@@ -71,12 +71,12 @@ for job in range(10):
 
 Here, we've got 10 jobs that we want to get done and 5 workers that will work on the job.
 
-#### Multithreading is not always the perfect solution
+### Multithreading is not always the perfect solution
 I find that many guides tend to skip the negatives of using the tool they've just been trying to teach you. It's important to understand that there are both pros and cons associated with using all these tools. For example:
 1. There is overhead associated with managing threads, so you don't want to use it for basic tasks (like the example)
 2. Increases the complexity of the program, which can make debugging more difficult
 
-## Multiprocessing and the difference from Threading
+## What is Multiprocessing? How is it different than Threading?
 
 Without multiprocessing, Python programs have trouble maxing out your system's specs because of the `GIL` (Global Interpreter Lock). Python wasn't designed considering that personal computers might have more than one core (shows you how old the language is), so the GIL is necessary because Python is not thread-safe and there is a globally enforced lock when accessing a Python object. Though not perfect, it's a pretty effective mechanism for memory management. _What can we do?_
 
@@ -84,7 +84,7 @@ Multiprocessing allows you to create programs that can run concurrently (bypassi
 
 Because of this, the usual problems associated with threading (such as data corruption and deadlocks) are no longer an issue. Since the processes don't share memory, they can't modify the same memory concurrently.
 
-## Let's Get Started:
+### Let's Get Started:
 
 ```Python
 import multiprocessing
