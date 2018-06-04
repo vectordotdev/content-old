@@ -1,7 +1,7 @@
 
 # Multiprocessing vs. Multithreading in Python: What you need to know.
 
-***TLDR:*** If you don't want to understand the under-the-hood explanation, here's what you've been waiting for: you can use `threading` if your program is network bound or you are running your UI in Python using something like TkInter and `multiprocessing` if it's CPU bound.
+***TLDR:*** If you don't want to understand the under-the-hood explanation, here's what you've been waiting for: you can use `threading` if your program is network bound or `multiprocessing` if it's CPU bound.
 
 _Just a disclaimer: we're a logging company here @ Timber. We'd love it if you tried out [our product](timber.io) (it's seriously great!), but that's all we're going to advertise it ... you guys came here to learn about the difference between threading and multiprocessing in python, and this guide won't disappoint._
 
@@ -29,7 +29,7 @@ def testThread(num):
 
 if __name__ == '__main__':
     for i in range(5):
-        t = threading.Thread(target=testThread, arge=(i,))
+        t = threading.Thread(target=testThread, arg=(i,))
         t.start()
 ```
 If you've never seen `if __name__ == '__main__':` before, it's basically a way to make sure the code that's nested inside it will only run if the script is run directly (not imported).
