@@ -1,0 +1,67 @@
+# Rise of Microservices and Docker
+
+Are you a software engineer/developer/coder or may be even a tech enthusiast who has been hearing of terms like `Microservices` and `Docker`? 
+
+Are you someone who has been encountering these terminologies so often through various channels like articles, news, blogs, meetups, conferences but still clueless as to why there is so much hype around it?
+
+If yes, then you are at the right place. This is a must read blog for you!
+
+## A little bit of "History"
+
+In the early 2000's, we witnessed the rise of `Service Oriented Architecture (SOA)`, a popular design paradigm for building softwares. In simple words, SOA is an software architecture pattern that allows us to build large scale enterprise applications that normally require us to integrate multiple services, each of which is build over different platforms and languages through a common communication mechanism.
+
+Here is a simple pictorial representation of the Service Oriented Architecture (SOA):
+
+<illustrations>
+
+> Key Points
+
+1. SOA is preferred for large scale software products such as big enterprise applications
+2. SOA focuses on integrating multiple services in a single application rather than emphasizing on modularizing the application
+3. The common communication mechanism used for interaction between multiple services in an SOA is referred as the [Enterprise Service Bus (ESB)](https://en.wikipedia.org/wiki/Enterprise_service_bus)
+4. SOA based applications could be `monolithic` in nature. This means that you have single application layer which contains your user interface or presentation layer, business logic or application layer and database layer all integrated in a single platform
+
+##  Interesting, tell me more about "Monolithic Architecture"
+
+Let us understand monolithic applications by taking an example of an ecommerce website. Now, we all know that most of the ecommerce application can be accessed by multiple devices and hence they have multiple user interfaces for laptop and mobile views. This forms your presentation layer. 
+
+We also know that there are multiple operations or services that are running in accordance to each other to ensure the regular functioning of your ecommerce applications. Some of these services are account creation, displaying product catalog, building and validating your shopping cart, generating bill, order confirmation, payment mechanism and so on. 
+
+In a monolithic application, all these services run under a single application layer, so your ecommerce software architecture would look something similar to what is represented below:
+
+<illustrations>
+
+> Drawbacks
+
+1. It is obvious that the application is going to grow in size with the increase in number of services offered by it. This might become overwhelming for both new and existing developers to build and maintain the application codebase
+2. We all know that technologies are continuously evolving. With a monolithic architecture, it would become tremendously difficult to not just incrementally update to latest versions of chosen technologies but also upgrading to newer technologies
+3. Continuous deployments could become nightmares. Every small change in the application would require the developers to rebuild the whole application. This can increase the risk of failures and turn out to be time and resource consuming factor
+4. With the increase in the customer base, we might have more requests to process and we will definitely require more resources for it. Thus, it is very important to build products that can scale. With monolithic applications, we can scale only in one direction, i.e., vertically but not horizontally. This means that we can scale the application over a single machine by adding more hardware resources such as memory and computational power but it is still going to be a challenge to ensure horizontal scaling, that which is spread across multiple machines
+
+## "Microservices" to the rescue!
+
+`Microservices` architecture can be considered to be a specialisation of SOA and an alternative pattern that overcomes the drawbacks of monolithic architecture. 
+
+In this architecture, we focus on modularizing the application by dividing it into smaller standalone services that can be built, deployed, scaled and even maintained independently of other existing services or the application itself as a whole. These independent services are what is called as microservices and hence the name, Microservices Architecture.
+
+<illustrations>
+
+> Highlights
+
+1. Microservices Architecture and SOA are not the same but they do hold some similarities and hence Microservices Architecture is often referred as a variant of SOA or a fine-grained SOA or even a specialisation of SOA. In other words, SOA can be considered to be a superset of Microservices Architecture
+2. The main reason as to why people find similarity between these architectures is because both of them focus on building loosely coupled services for an application. These services have clear boundaries and separate well-defined functionalities set for each one of them
+3. The difference lies in the fact that SOA can mean a lot of other things. For instance, SOA can be applicable over a Monolithic Architecture as well where the focus is to integrate systems together in an application and ensure code resuablity. This does not hold true for Microservices Architecture, where the focus is to modularize the application by building independent services and ensuring scalabity of the product
+
+> Advantages
+
+1. Introduces the philosophy of `Separation of Concerns` and ensures `Agile Development` of software applications in both simple and complex domains
+2. The standalone ability or indepedent nature of microservices open doors for following benefits:
+   - Reduces complexity by allowing developers to break into small teams each of them building and maintaining one or more services
+   - Reduces risk by allowing deployment in chunks rather than rebuilding the whole application for every small or big change
+   - Easy maintainence by allowing flexibility to incrementally update/upgrade the technology stack for one or more services rather than the whole application in single point in time
+   - In addition to giving you flexibility to build services in any language, thereby making it language independent, it also allows you to maintain separate data models of each of the given services
+3. You can build a fully automated deployment mechanism for ensuring individual service deployments, service management and autoscaling of the application
+
+## Evolution of Technologies
+
+
