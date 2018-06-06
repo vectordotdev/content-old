@@ -12,7 +12,7 @@ In the early 2000's, we witnessed the rise of `Service Oriented Architecture (SO
 
 Here is a simple pictorial representation of the Service Oriented Architecture (SOA):
 
-<illustrations>
+![SOA](../images/microservices-docker-image-one.jpg)
 
 > Key Points
 
@@ -29,7 +29,7 @@ We also know that there are multiple operations or services that are running in 
 
 In a monolithic application, all these services run under a single application layer, so your ecommerce software architecture would look something similar to what is represented below:
 
-<illustrations>
+![Monolithic Application](../images/microservices-docker-image-two.jpg)
 
 > Drawbacks
 
@@ -44,7 +44,7 @@ In a monolithic application, all these services run under a single application l
 
 In this architecture, we focus on modularizing the application by dividing it into smaller standalone services that can be built, deployed, scaled and even maintained independently of other existing services or the application itself as a whole. These independent services are what is called as microservices and hence the name, Microservices Architecture.
 
-<illustrations>
+![Microservices](../images/microservices-docker-image-three.jpg)
 
 > Highlights
 
@@ -70,7 +70,7 @@ Wait, you might be thinking, what does this even mean?
 
 Now, in order to understand how we have evolved in the IT infrastructure space, let us take the help of the following diagram:
 
-<illustrations>
+![Software Infrastructure](../images/microservices-docker-image-four.jpg)
 
 The first picture shows a physical machine or a hardware server. Normally, when we build applications, we use the resources provided by our host OS and the same pattern used to be followed for deploying the application. But what if you want to scale the application? At some point, you might want another hardware server and as the number keeps increasing, so does your cost and other resources like hardware and energy consumptions.
 
