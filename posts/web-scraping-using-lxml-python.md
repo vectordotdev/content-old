@@ -1,22 +1,22 @@
-Hello everyone! I hope you are doing well. I am [Yasoob](http://yasoob.me) from [Python Tips](https://pythontips.com). In this article, we will be learning about how to do web scraping using Python. First of all, why should you even bother learning how to web scrape? If your job doesn't require you to learn it then let me give you some motivation. What if you want to create a website which curates cheapest products from Amazon, Walmart and a couple of other online stores? A lot of these online stores don't provide you with an easy way to access their information using an API. In the absence of an API, your only choice is to create a web scraper which can extract information from these websites automatically and provide you with that information in an easy to use way.
+Hello everyone! I hope you are doing well. I am [Yasoob](http://yasoob.me) from [Python Tips](https://pythontips.com). In this article, I'll teach you the basics of web scraping using Python. First of all, why should you even bother learning how to web scrape? If your job doesn't require you to learn it, then let me give you some motivation. What if you want to create a website which curates cheapest products from Amazon, Walmart and a couple of other online stores? A lot of these online stores don't provide you with an easy way to access their information using an API. In the absence of an API, your only choice is to create a web scraper which can extract information from these websites automatically and provide you with that information in an easy to use way.
 
-Here is an example of a typical API response in JSON. This is the response from Reddit.
+Here is an example of a typical API response in JSON. This is the response from Reddit:
 
 ![Typical API Response in JSON](https://imgur.com/WOBUbyn.png)
 
-There are a lot of Python libraries out there which can help you with web scraping. There is [lxml](http://lxml.de/), [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/?) and a full-fledged framework called [Scrapy](https://scrapy.org/). Most of the tutorials discuss lxml and Scrapy so I decided to go with lxml in this post. I will teach you the basics of XPaths and how you can use them to extract data from an HTML document. I will take you through a couple of different examples so that you can quickly get up-to-speed with lxml and XPaths.
+There are a lot of Python libraries out there which can help you with web scraping. There is [lxml](http://lxml.de/), [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/?) and a full-fledged framework called [Scrapy](https://scrapy.org/). Most of the tutorials discuss lxml and Scrapy, so I decided to go with lxml in this post. I will teach you the basics of XPaths and how you can use them to extract data from an HTML document. I will take you through a couple of different examples so that you can quickly get up-to-speed with lxml and XPaths.
 
-If you are a gamer you will love the website we will be working with. We will be trying to extract data from [Steam](https://store.steampowered.com/). More specifically, we will be extracting the "[popular new releases](https://store.steampowered.com/explore/new/)" information. I am converting this into a two-part series. In this part, we will be creating a Python script which can extract the names of the games, the prices of the games, the different tags associated with each game and the target platforms. In the second part, we will turn this script into a Flask based API and then host it on Heroku.
+If you are a gamer, you will already know of (and likely love) this website. We will be trying to extract data from [Steam](https://store.steampowered.com/). More specifically, we will be selecting from the "[popular new releases](https://store.steampowered.com/explore/new/)" information. I am converting this into a two-part series. In this part, we will be creating a Python script which can extract the names of the games, the prices of the games, the different tags associated with each game and the target platforms. In the second part, we will turn this script into a Flask based API and then host it on Heroku.
 
 ![Steam Popular New Releases](https://imgur.com/M2dJIbc.png)
 
-First of all, open up the "[popular new releases](https://store.steampowered.com/explore/new/)" page on Steam and scroll down until you see the Popular New Releases tab. At this point, I normally open up Chrome developer tools and see which HTML tags contain the required data. I extensively use the element inspector tool (The button in the top left of the developer tools). It allows you to see the HTML markup behind a specific element on the page with just one click. Just to give you a high-level overview, everything on a web page is encapsulated in an HTML tag and tags are usually nested. You just need to figure out which tags you need to extract the data from and you are good to go. In our case, if we take a look we can see that every separate list item is encapsulated in an anchor (`a`) tag.
+First of all, open up the "[popular new releases](https://store.steampowered.com/explore/new/)" page on Steam and scroll down until you see the Popular New Releases tab. At this point, I usually open up Chrome developer tools and see which HTML tags contain the required data. I extensively use the element inspector tool (The button in the top left of the developer tools). It allows you to see the HTML markup behind a specific element on the page with just one click. As a high-level overview, everything on a web page is encapsulated in an HTML tag and tags are usually nested. You need to figure out which tags you need to extract the data from and you are good to go. In our case, if we take a look, we can see that every separate list item is encapsulated in an anchor (`a`) tag.
 
 ![](https://imgur.com/cHKdTlR.png)
 
-The anchor tags themselves are encapsulated in the `div` with an id of `tab_newreleases_content`. I am mentioning the id because there are two tabs on this page. The second tab is the normal "New Releases" tab and we don't want to extract information from that tab. Hence, we will first extract the "Popular New Releases" tab and then we will extract the required information from this tag.
+The anchor tags themselves are encapsulated in the `div` with an id of `tab_newreleases_content`. I am mentioning the id because there are two tabs on this page. The second tab is the standard "New Releases" tab, and we don't want to extract information from that tab. Hence, we will first extract the "Popular New Releases" tab, and then we will extract the required information from this tag.
 
-This is a very good time to create a new Python file and start writing down our script. I am going to create a `scrape.py` file. Now let's go ahead and import the required libraries. The first one is the [`requests`](http://docs.python-requests.org/) library and the second one is the [`lxml.html`](http://lxml.de/) library.
+This is a perfect time to create a new Python file and start writing down our script. I am going to create a `scrape.py` file. Now let's go ahead and import the required libraries. The first one is the [`requests`](http://docs.python-requests.org/) library and the second one is the [`lxml.html`](http://lxml.de/) library.
 
 ```
 import requests
@@ -50,7 +50,7 @@ Let's try writing an XPath for extracting the div which contains the 'Popular Ne
 new_releases = doc.xpath('//div[@id="tab_newreleases_content"]')[0]
 ```
 
-This statement will return a list of all the `divs` in the HTML page which have an id of `tab_newreleases_content`. Now because we know that only one div on the page has this id we can simply take out the first element from the list (`[0]`) and that would be our required `div`. Let's break down the `xpath` and try to understand it:
+This statement will return a list of all the `divs` in the HTML page which have an id of `tab_newreleases_content`. Now because we know that only one div on the page has this id we can take out the first element from the list (`[0]`) and that would be our required `div`. Let's break down the `xpath` and try to understand it:
 
 - `//` these double forward slashes tell `lxml` that we want to search for all tags in the HTML document which match our requirements/filters. Another option was to use `/` (a single forward slash). The single forward slash returns only the immediate child tags/nodes which match our requirements/filters
 - `div` tells `lxml` that we are searching for `divs` in the HTML page
@@ -152,9 +152,9 @@ for game in platforms_div:
 
 In **line 1** we start with extracting the `tab_item_details` `div`. The XPath in **line 5** is a bit different. Here we have `[contains(@class, "platform_img")]` instead of simply having `[@class="platform_img"]`. The reason is that `[@class="platform_img"]` returns those `spans` which only have the `platform_img` class associated with them. If the `spans` have an additional class, they won't be returned. Whereas `[contains(@class, "platform_img")]` filters all the `spans` which have the `platform_img` class. It doesn't matter whether it is the only class or if there are more classes associated with that tag.
 
-In **line 6** we are making use of a list comprehension to reduce the code size. The `.get()` method allows us to extract any attribute of a tag. Here we are using it to extract the `class` attribute of a `span`. We get a string back from the `.get()` method. In case of the first game, the string being returned is `platform_img win` so we split that string based on the comma and the whitespace and then we store the last part (which is the actual platform name) of the splitted string in the list.
+In **line 6** we are making use of a list comprehension to reduce the code size. The `.get()` method allows us to extract an attribute of a tag. Here we are using it to extract the `class` attribute of a `span`. We get a string back from the `.get()` method. In case of the first game, the string being returned is `platform_img win` so we split that string based on the comma and the whitespace, and then we store the last part (which is the actual platform name) of the split string in the list.
 
-In **lines 7-8** we are removing the `hmd_separator` from the list if it exists. This is because `hmd_separator` is not really a platform. It is just a vertical separator bar used to separate actual platforms from VR/AR hardware.
+In **lines 7-8** we are removing the `hmd_separator` from the list if it exists. This is because `hmd_separator` is not a platform. It is just a vertical separator bar used to separate actual platforms from VR/AR hardware.
 
 This is the code we have so far:
 
@@ -197,10 +197,12 @@ for info in zip(titles,prices, tags, total_platforms):
     output.append(resp)
 ```
 
-This code is basically self-explanatory. We are using the [`zip`](https://docs.python.org/3/library/functions.html#zip) function to loop over all of those lists in parallel. Then we create a dictionary for each game and assign the title, price, tags, and platforms as a separate key in that dictionary. Lastly, we append that dictionary to the output list.
+This code is self-explanatory. We are using the [`zip`](https://docs.python.org/3/library/functions.html#zip) function to loop over all of those lists in parallel. Then we create a dictionary for each game and assign the title, price, tags, and platforms as a separate key in that dictionary. Lastly, we append that dictionary to the output list.
 
 In a future post, we will take a look at how we can convert this into a Flask based API and host it on Heroku.
 
-I hope you guys enjoyed this tutorial. If you want to read more tutorials of a similar nature please go to [Python Tips](https://pythontips.com). I regularly write Python tips, tricks, and tutorials on that blog. And if you are interested in learning intermediate Python then please check out my open source book [here](http://book.pythontips.com).
+I hope you guys enjoyed this tutorial. If you want to read more tutorials of a similar nature, please go to [Python Tips](https://pythontips.com). I regularly write Python tips, tricks, and tutorials on that blog. And if you are interested in learning intermediate Python, then please check out my open source book [here](http://book.pythontips.com).
 
 Have a great day!
+
+Just a disclaimer: we're a logging company here @ Timber. We'd love it if you tried out our product (it's seriously great!), but that's all we're going to advertise it.
