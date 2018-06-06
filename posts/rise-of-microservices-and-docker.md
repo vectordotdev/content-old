@@ -64,4 +64,32 @@ In this architecture, we focus on modularizing the application by dividing it in
 
 ## Evolution of Technologies
 
+Alongside, evolution of software architectural patterns, we have also seen emergence of some new technologies such as `Docker` and `Kubernetes` for supporting our software infrastructures and ensuring efficient management of our scalable products and services. We have evolved from using `hardware virtualization` to `containerization`. 
 
+Wait, you might be thinking, what does this even mean?
+
+Now, in order to understand how we have evolved in the IT infrastructure space, let us take the help of the following diagram:
+
+<illustrations>
+
+The first picture shows a physical machine or a hardware server. Normally, when we build applications, we use the resources provided by our host OS and the same pattern used to be followed for deploying the application. But what if you want to scale the application? At some point, you might want another hardware server and as the number keeps increasing, so does your cost and other resources like hardware and energy consumptions.
+
+Also, you might be thinking if you really require all the resources of your hardware and host OS at the same time for running your application. Not really, so then why such a heavy infrastructure setup?
+
+This led to the evolution of hardware virtualization for optimizing IT infrastructure setups through what we call today as Virtual Machines (VMs). As you see in the second diagram, VMs have their own guest OS which is run over a single physical machine or host OS. This enables us to run multiple applications without having the need for installing multiple physical machines. The host OS can ensure that there is systematic resource distribution and load balancing between the different VMs running on it.
+
+Although, VMs made things easier to maintain and drastically reduced costs, there were still some more optimizations required. For instance, not all applications would behaviour as expected in an guest OS enviroment. Also, the guest OS would require a lot of resources for even running simple processes. 
+
+These problems, led to our next innovation which is containerization. Unlike virtual machines which was more operating system specific, containers are application specific which makes it more lighter. Furthermore, VMs can run multiple processes whereas a container runs as a single process. This leds us to two things:
+1. You can run multiple containers on a physical machine or you can even think of running it on a single VM. Either cases, it solves your application related problems
+2. Containerization is not a competition to Virtualization but rather a complimentary factor to further optimise our IT software infrastructure
+
+## Docker
+
+Now that we understand the evolution of IT software infrastructure, we might want to know how can we achieve things like `Microservices Architecture` and `Containerization` that we discussed earlier? A simple answer to this could be, `Docker`.
+
+[Docker](https://www.docker.com/) is the world's leading software containerization platform with excellent community support. It allows you to modernize your application, and ensures frictionless portability of your applications to cloud infrastructure. It also provides facilities for continuous integration and deployment, managing and scheduling of containers and lot more.
+
+## Conclusion
+
+Now that we understand the reasons for all the hype around microservices and docker, our next blog will take you on a deeper dive to how you can use these technologies and build modern scalable applications with it.
