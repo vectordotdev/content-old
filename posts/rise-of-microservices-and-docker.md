@@ -14,8 +14,8 @@ Here is a simple pictorial representation of the Service Oriented Architecture (
 
 ![SOA](../images/microservices-docker-image-one.jpg)
 
-> Key Points
 
+**Key Points**
 1. SOA is preferred for large-scale software products such as enterprise applications
 2. SOA focuses on integrating multiple services in a single application rather than emphasizing on modularizing the application
 3. The common communication mechanism used for interaction between multiple services in an SOA is referred to as [Enterprise Service Bus (ESB)](https://en.wikipedia.org/wiki/Enterprise_service_bus)
@@ -31,8 +31,7 @@ In a monolithic application, all these services run under a single application l
 
 ![Monolithic Application](../images/microservices-docker-image-two.jpg)
 
-> Drawbacks
-
+**Drawbacks**
 1. It is evident that the application is going to grow in size with the increase in the number of services offered. This might become overwhelming for developers to build and maintain the application codebase
 2. Not only is it difficult to update your current stack, but it is a nightmare to change something in that stack
 3. Every change requires developers to rebuild the entirety of the application, which wastes resources.
@@ -46,14 +45,12 @@ In this architecture, we focus on modularizing the application by dividing it in
 
 ![Microservices](../images/microservices-docker-image-three.jpg)
 
-> Highlights
-
+**Highlights**
 1. Microservices Architecture and SOA are not the same, but they do hold some similarities. Microservice Architecture is referred to as a variant of SOA or even a specialization of SOA. In other words, SOA can be considered to be a superset of Microservices Architecture
 2. The main reason why people find similarity between these architectures is because both of them focus on building loosely coupled services for an application. These services have clear boundaries and separate, well-defined functionalities set for each one of them
 3. The difference lies in the fact that SOA can mean a lot of other things. For instance, SOA can be applicable over a Monolithic Architecture as well where the focus is to integrate systems together in an application and ensure code reusability. This does not hold true for a Microservice Architecture, where the focus is to modularize the application by building independent services and ensuring scalability of the product
 
-> Advantages
-
+**Advantages**
 1. Introduces the philosophy of `Separation of Concerns` and ensures `Agile Development` of software applications in both simple and complex domains
 2. The standalone ability or independent nature of microservices open doors for following benefits:
    - Reduces complexity by allowing developers to break into small teams, each of which builds/maintains one or more services
