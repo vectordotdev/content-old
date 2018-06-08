@@ -1,7 +1,7 @@
 # Error Handling Patterns in Express.js
 
 
-Building an application isn't just about writing code that just works. It's about making your program run flawlessly so that it behaves well when unexpected conditions are encountered. There are at large two types of errors in JavaScript: programmer errors and genuine real-time errors. The programmer errors are fixable during development whereas real-time, operational errors are not predictable. You need an efficient error handling mechanism that should keep your Node server stable regardless of the type of errors that are thrown at it. 
+Building an application isn't just about writing code that works. It's about making your program run flawlessly, so it behaves well when you encounter unexpected conditions. There are at large two types of errors in JavaScript: programmer errors and real-time errors. The programmer errors are fixable during development, while real-time, operational errors are not predictable. You need an efficient error handling mechanism that keeps your Node server stable regardless of its type.
 
 The objective of this tutorial is to teach you different ways that you can handle JavaScript errors for your Express server. 
 
@@ -29,8 +29,8 @@ const express = require('express')
 const app = express()
 
 app.get('/', (req, res) => res.json(
-	{
-    	status: 200,
+    {
+        status: 200,
         message: "Server is up and running"
     })
 
@@ -41,9 +41,9 @@ app.listen(3000, () => console.log('Listening to port 3000!'))
 
 Let's have a look at what happens under the hood when you run your application. When an error is encountered in JavaScript, the interpreter stops whatever it's doing and then throws an exception. The throw here refers to JavaScript's throw mechanism. The execution of the current function stops and the interpreter starts looking for a catch block so that the application doesn't terminate. However, when it doesn't find one, it jumps out of the current function and all the other functions on top of it in the call stack until an exception handler is found. When it reaches the top-level function that started the execution, it terminates the program because no exception handling mechanism was found. That's when Node returns an error screen in the console.
 
-Crashing an application everytime an error occurs will result in a disastrous outcome. Instead, we need more reliable and novel techniques to handle exceptions and then let the user know that an error has occurred. 
+Crashing an application with every error would be disastrous. Instead, we need more reliable and novel techniques to handle exceptions and then let the user know that an error has occurred. 
 
-Now that we know how JavaScript handles errors, let us have a look at the different types of errors that you can expect. The errors occurring in Node.js can be categorized into 4 types:
+The errors occurring in Node.js can be categorized into four types:
 
 1. Standard JavaScript - These are the usual JavaScript errors:
 - `<SyntaxError>` : thrown when you break certain grammar rules of the language
@@ -53,9 +53,11 @@ Now that we know how JavaScript handles errors, let us have a look at the differ
 - `<EvalError>` : thrown when a call to eval() fails.
 - `<URIError>` : thrown when a global URI handling function is misused.
 
-2. System errors - The errors that are invoked by the underlying operating system because certain constraint/limitation was encountered. This can be anything from missing file or missing permission to access a resource.
-3. User-specified errors - The user-specified errors are encountered when the user performs an action that they are not supposed to. These errors are triggered by the application code.
-4. Assertion Errors - Assertion errors are raised when something that should never happen has happened. 
+2. System errors - invoked by the underlying operating system because of a specific constraint/limitation. This can be anything from missing file or missing permission to access a resource.
+
+3. User-specified errors - encountered when the user performs an action that they are not supposed to. The application code triggers these errors.
+
+4. Assertion Errors - raised when something that should never happen has happened. 
 
 Standard JavaScript errors and system errors throw an error object that's an instance of the Error class. The error object has information about the type of error, a message and a stack trace that provides more insight into the error that occurred.
 
@@ -63,13 +65,13 @@ Standard JavaScript errors and system errors throw an error object that's an ins
 
 ### Express Middlewares
 
-Express.js is popular for its middlewares and it comes with a global error handling middleware. The error handling middleware should be placed towards the end of your app.js file - after all the `app.use` calls so that it's the last middleware to report any errors. Unlike an ordinary middleware function, error middleware has four arguments instead of three: `(err, req, res, next)`.
+Express.js is famous for its middlewares, and it comes with a global error handling middleware. The error handling middleware should be placed towards the end of your app.js file - after all the `app.use` calls so that it's the last middleware to report any errors. Unlike an ordinary middleware function, error middleware has four arguments instead of three: `(err, req, res, next)`.
 
 ```
 app.use( (err,req,res,next) => {
     res.status(500)
      .json({
-      	name: err.name, 
+          name: err.name, 
         message: err.message, 
         trace: err.stack
      })
@@ -83,7 +85,7 @@ const app = express()
 
 app.get('/', (req, res) => {
     res.json({
-    	status: 200,
+        status: 200,
         message: success //success is not defined
     })
 })
@@ -91,9 +93,9 @@ app.get('/', (req, res) => {
 app.use( (err,req,res,next) => {
     res.status(500)
        .json({
-       	name: err.name, 
-       	message: err.message, 
-       	trace: err.stack
+           name: err.name, 
+           message: err.message, 
+           trace: err.stack
        })
 });
 app.listen(3001, () => console.log('Listening to port 3001!'))
@@ -108,7 +110,7 @@ app.get('/forbidden', function(req, res, next) {
 });
 ```
 
-The thing I like about middlewares is that you can organize them further. For instance, you can create an additional middleware that logs all the errors and then chain it with the error handling middleware. Apart from that, middlewares are also a great place for generalized error handling. In the example below, we're using the wildcard '\*' to catch requests to undefined routes and then throw an error.
+The biggest benefit of middlewares is that they can be organized further. For instance, you can create an additional middleware that logs all the errors and then chain it with the error handling middleware. Apart from that, middlewares are also a great place for generalized error handling. In the example below, we're using the wildcard '\*' to catch requests to undefined routes and then throw an error.
 ```
 app.use('*', function(req, res, next) {
   let err = new Error(`${req.ip} tried to reach ${req.originalUrl}`); 
@@ -123,7 +125,9 @@ app.use(errorHandler); //The error handler middleware that we created earlier.
 ```
 
 ### What about asynchronous JavaScript errors?
-Throwing an exception and handling it in the same tick isn't hard. However, a lot of things in JavaScript happen asynchronously and the above technique wouldn't work. There are many asynchronous ways to handle the errors. Previously, one popular method was to use an error-first callback method where a callback function is provided as an argument. When that asynchronous operation is completed, the callback function either returns an Error object as the first argument (when an error is thrown) or null. 
+Throwing an exception and handling it in the same tick isn't hard. However, a lot of things in JavaScript happen asynchronously, and the above technique wouldn't work. There are many asynchronous ways to handle the errors. 
+
+One popular method was to use an error-first callback method where a callback function is provided as an argument. When that asynchronous operation is completed, the callback function either returns an Error object as the first argument (when an error is thrown) or null. 
 
 Here's an example of handling asynchronous errors using error-first callback method.
 ```
@@ -161,12 +165,12 @@ app.get('/users', function (req, res, next) {
       // do something here
     })
     .catch(err => {
-    	err.httpStatusCode = 500,
+        err.httpStatusCode = 500,
         next(err);
      })
 })
 ```
-When the promise is rejected, the errors are caught in the catch block and we're using next(err) to let the error handler take care of it. This looks nice, but when we have a chain of then's, we'll end up with one critical error handler for the whole chain. To get actual control of the errors that are thrown, you could settle for a pattern like this:
+When the promise is rejected, the errors are caught in the catch block, and we're using next(err) to let the error handler take care of it. This looks nice, but when we have a chain of then's, we'll end up with one critical error handler for the whole chain. To get actual control of the errors that are thrown, you could settle for a pattern like this:
 
 ```
 Promise.resolve()
@@ -176,7 +180,7 @@ Promise.resolve()
 .then(Function4).catch(errorHandler4)
 .catch(finalErrorHandler);
 ```
-There are many other patterns out there to handle errors better, but it still appears verbose and Promises don't appear to be the right fit for the job. That's why async/await was introduced into JavaScript. The purpose of async/await is to simplify the behavior of promises and make the code appear synchronous.
+There are many other patterns out there to handle errors better, but it still appears verbose, and Promises don't appear to be the right fit for the job. That's why async/await was introduced into JavaScript. The purpose of async/await is to simplify the behavior of promises and make the code appear synchronous.
 
 Here's an excerpt from [Mozilla Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) that explain how async/await works:
 
@@ -184,7 +188,7 @@ Here's an excerpt from [Mozilla Web Docs](https://developer.mozilla.org/en-US/do
 
 > Remember, the await keyword is only valid inside async functions. If you use it outside of an async function's body, you will get a SyntaxError.
 
-Implementing async/await is straightforward and you can then handle the errors using a try/catch block as follows:
+Implementing async/await is straightforward, and you can then handle the errors using a try/catch block as follows:
 
 ```
 app.get('/users', async (req, res, next) => {
@@ -198,9 +202,9 @@ app.get('/users', async (req, res, next) => {
 })
 ```
 
-The callback function has an `async` keyword attached to it and the asynchronous calls appear synchronous because of `await Users.get()`. We use the traditional try/catch to catch the errors and then pass the control to the error handler middleware using next. 
+The callback function has an `async` keyword attached to it, and the asynchronous calls appear synchronous because of `await Users.get()`. We use the traditional try/catch to catch the errors and then pass the control to the error handler middleware using next. 
 
-We're close, but this isn't perfect! We need to use a try/catch block on each middleware and that's a lot of boilerplate that you can avoid! Instead, we can create a helper function that wraps all the routes and handles rejected promises.
+We're close, but this isn't perfect! We need to use a try/catch block on each middleware, and that's a lot of boilerplate that you can avoid! Instead, we can create a helper function that wraps all the routes and handles rejected promises.
 
 ```
 const wrapperMiddleware = fn =>
@@ -213,7 +217,7 @@ const wrapperMiddleware = fn =>
   };
 ```
   
-WrapperMiddleware accepts a function as an argument so that we resolve the function inside our wrapper. We pass the function to `Promise.resolve` and it resolves to whatever value returned by the route handler. If an error occurs and the wrapper receives a rejected promise, the catch block will be invoked. 
+WrapperMiddleware accepts a function as an argument so we resolve the function inside our wrapper. We pass the function to `Promise.resolve` and it resolves to whatever value returned by the route handler. If an error occurs and the wrapper receives a rejected promise, the catch block will be invoked. 
 
 ```
 router.get('/users', wrapperMiddleware(async (req, res, next) => {
@@ -227,9 +231,4 @@ router.get('/users', wrapperMiddleware(async (req, res, next) => {
 
 ```
 
-In my opinion, this is by far the best method to handle asynchronous errors in Express and it looks cleaner compared to Promises.
-
-## Summary
-Handling errors in Express is pretty much straightforward with async/await. You can use the combination of wrapper middleware and async/await to separate the error handling logic from the business logic. Next time you're building an express application try using the techniques covered in this article. 
-
-What are your thoughts about handling errors in Express? Share them in the comments.
+In my opinion, this is the best method to handle asynchronous errors in Express, and it looks cleaner compared to Promises.
