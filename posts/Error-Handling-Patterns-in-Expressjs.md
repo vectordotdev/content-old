@@ -231,4 +231,4 @@ router.get('/users', wrapperMiddleware(async (req, res, next) => {
 
 ```
 
-In my opinion, this is the best method to handle asynchronous errors in Express, and it looks cleaner compared to Promises.
+In my opinion, this is the best method to handle asynchronous errors in Express, and it looks cleaner than Promises.
