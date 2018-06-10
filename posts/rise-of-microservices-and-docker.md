@@ -12,7 +12,7 @@ In the early 2000's, we witnessed the rise of `Service Oriented Architecture (SO
 
 Here is a simple pictorial representation of the Service Oriented Architecture (SOA):
 
-![SOA](../images/microservices-docker-image-one.jpg)
+![SOA](../images/microservices-docker-image-one.png)
 
 
 **Key Points**
@@ -29,7 +29,7 @@ We also know that multiple operations or services are running with each other to
 
 In a monolithic application, all these services run under a single application layer, so the ecommerce software architecture would look like this:
 
-![Monolithic Application](../images/microservices-docker-image-two.jpg)
+![Monolithic Application](../images/microservices-docker-image-two.png)
 
 **Drawbacks**
 1. It is evident that the application is going to grow in size with the increase in the number of services offered. This might become overwhelming for developers to build and maintain the application codebase
@@ -43,7 +43,7 @@ In a monolithic application, all these services run under a single application l
 
 In this architecture, we focus on modularizing the application by dividing it into smaller standalone services that can be built, deployed, scaled and even maintained independently of other existing services or the application itself as a whole. These independent services are called microservices, hence the name Microservice Architecture.
 
-![Microservices](../images/microservices-docker-image-three.jpg)
+![Microservices](../images/microservices-docker-image-three.png)
 
 **Highlights**
 1. Microservices Architecture and SOA are not the same, but they do hold some similarities. Microservice Architecture is referred to as a variant of SOA or even a specialization of SOA. In other words, SOA can be considered to be a superset of Microservices Architecture
@@ -67,7 +67,7 @@ Wait, you might be thinking, what does this even mean?
 
 Now, to understand how we have evolved in the IT infrastructure space, let us take the help of the following diagram:
 
-![Software Infrastructure](../images/microservices-docker-image-four.jpg)
+![Software Infrastructure](../images/microservices-docker-image-four.png)
 
 The first picture shows a physical machine or a hardware server. Typically, when we build applications, we use the resources provided by our host OS and the same pattern used to be followed when deploying the application. But what if you want to scale the application? At some point, you might want another hardware server and as the number keeps increasing, so does your cost and other resources like hardware and energy consumptions.
 
