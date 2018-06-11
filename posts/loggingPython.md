@@ -28,7 +28,7 @@ Even though I think self-preservation is a good enough reason to start logging (
 
 1. Visibility into User Behavior
 
-When using a cloud-wbased solution such as AWS, it can often feel that you're putting something into a black box when something breaks. It's easy to see what's going in, and you know what you expect should come out, but it's near-impossible to tell what's happening on the inside. Logging can serve as your end-to-end solution to give you visibility into your cloud-based components.
+When using a cloud-based solution such as AWS, it can often feel that you're putting something into a black box when something breaks. It's easy to see what's going in, and you know what you expect should come out, but it's near-impossible to tell what's happening on the inside. Logging can serve as your end-to-end solution to give you visibility into your cloud-based components.
 
 2.  Prevent Problems
 
@@ -51,7 +51,7 @@ import logging
 logger = logging.getLogger(__name__)
 ```
 
-Never seen `__name__` before? You might have seen this with `if __name__ == "__main__":`.  You don't have to use it with the logger, but it allows you to see what file the log is coming from when you read the logs. Basically, `__name__` allows you to see what file you are currently in if the file was imported _OR_ it will return `__main__` if you started your script from that file. [Here](#)(https://www.youtube.com/watch?v=sugvnHA7ElY) is a video that explains it well (and goes by quickly @ 2x speed).
+Never seen `__name__` before? You might have seen this with `if __name__ == "__main__":`.  You don't have to use it with the logger, but it allows you to see what file the log is coming from when you read the logs. Basically, `__name__` allows you to see what file you are currently in if the file was imported _OR_ it will return `__main__` if you started your script from that file. [Here](https://www.youtube.com/watch?v=sugvnHA7ElY) is a video that explains it well (and goes by quickly @ 2x speed).
 
 ### Logging Levels
 
