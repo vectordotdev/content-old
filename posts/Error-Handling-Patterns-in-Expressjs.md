@@ -20,11 +20,12 @@ Use the `npm install` script to generate a *package.json* file. I prefer to set 
 npm install express --save
 npm install -g nodemon
 ```
-I've installed nodemon to monitor the changes in the demo-app project and auto restart the node.js application. 
+I've installed nodemon which is an essential development tool for a Node.js application. nodemon will watch all the files in the demo-app directory and if any changes are detected, nodemon will automatically restart your application. If *app.js* is the entry file, you can run `nodemon node app.js` and nodemon will take it from there. 
 
 Here is a very basic middleware to test that everything's in place:
 
 ```
+//app.js
 const express = require('express')
 const app = express()
 
