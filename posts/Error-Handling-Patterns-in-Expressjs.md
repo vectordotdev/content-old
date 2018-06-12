@@ -42,31 +42,15 @@ app.listen(3000, () => console.log('Listening to port 3000!'))
 
 Let's have a look at what happens under the hood when you run your application. When an error is encountered in JavaScript, the interpreter stops whatever it's doing and then throws an exception. The throw here refers to JavaScript's throw mechanism. The execution of the current function stops and the interpreter starts looking for a catch block so that the application doesn't terminate. However, when it doesn't find one, it jumps out of the current function and all the other functions on top of it in the call stack until an exception handler is found. When it reaches the top-level function that started the execution, it terminates the program because no exception handling mechanism was found. That's when Node returns an error screen in the console.
 
-Crashing an application with every error would be disastrous. Instead, we need more reliable and novel techniques to handle exceptions and then let the user know that an error has occurred. 
-
-The errors occurring in Node.js can be categorized into four types:
-
-1. Standard JavaScript - These are the usual JavaScript errors:
-- `<SyntaxError>` : thrown when you break certain grammar rules of the language
-- `<RangeError>` : thrown when a value is not within an expected range
-- `<ReferenceError>` : thrown when you have an undefined variable(s) in your script
-- `<TypeError>` : thrown when passing arguments of the wrong type
-- `<EvalError>` : thrown when a call to eval() fails.
-- `<URIError>` : thrown when a global URI handling function is misused.
-
-2. System errors - invoked by the underlying operating system because of a specific constraint/limitation. This can be anything from missing file or missing permission to access a resource.
-
-3. User-specified errors - encountered when the user performs an action that they are not supposed to. The application code triggers these errors.
-
-4. Assertion Errors - raised when something that should never happen has happened. 
-
-Standard JavaScript errors and system errors throw an error object that's an instance of the Error class. The error object has information about the type of error, a message and a stack trace that provides more insight into the error that occurred.
+Crashing an application with every error would be disastrous. Instead, we need more reliable and novel techniques to handle exceptions and then let the user know that an error has occurred. Standard JavaScript errors and system errors throw an error object which is an instance of the Error class. The error object has information about the type of error, a message and a stack trace that can help you debug your application during development.
 
 ## How to handle errors in Express.js
 
 ### Express Middlewares
 
-Express.js is famous for its middlewares, and it comes with a global error handling middleware. The error handling middleware should be placed towards the end of your app.js file - after all the `app.use` calls so that it's the last middleware to report any errors. Unlike an ordinary middleware function, error middleware has four arguments instead of three: `(err, req, res, next)`.
+An Express application is essentially a series of middleware function calls that get invoked after the server receives a request and before a response is generated. Each middleware function has access to the request object, the response object, and the next function in the request-response cycle. The next function takes the control to the next middleware that succeeds the current middleware.
+
+Express.js has a built-in error handling middleware that can be used to report any errors.  The error handling middleware should be placed towards the end of your app.js file - after all the `app.use` calls so that it's the last middleware to be invoked in the request-response cycle. Unlike an ordinary middleware function, error middleware has four arguments instead of three: `(err, req, res, next)`.
 
 ```
 app.use( (err,req,res,next) => {
