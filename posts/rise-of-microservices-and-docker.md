@@ -1,6 +1,6 @@
 # Rise of Microservices and Docker
 
-Are you a software engineer/developer/coder or may be even a tech enthusiast who has been hearing of terms like `Microservices` and `Docker` but still clueless as to why there is so much hype around it?
+Are you a software engineer/developer/coder or maybe even a tech enthusiast who has been hearing of terms like `Microservices` and `Docker` but still clueless as to why there is so much hype around it?
 
 If yes, this is a must-read for you!
 
@@ -16,7 +16,7 @@ Here is a simple pictorial representation of the Service Oriented Architecture (
 **Key Points**
 1. SOA is preferred for large-scale software products such as enterprise applications
 2. SOA focuses on integrating multiple services in a single application rather than emphasizing on modularizing the application
-3. The common communication mechanism used for interaction between multiple services in an SOA is referred to as [Enterprise Service Bus (ESB)](https://en.wikipedia.org/wiki/Enterprise_service_bus)
+3. The common communication mechanism used for interaction between various services in an SOA is referred to as [Enterprise Service Bus (ESB)](https://en.wikipedia.org/wiki/Enterprise_service_bus)
 4. SOA based applications could be `monolithic` in nature. This means that you have single application layer which contains your user interface or presentation layer, business logic or application layer, and database layer all integrated into a single platform
 
 ##  Interesting, tell me more about "Monolithic Architecture"
@@ -25,7 +25,7 @@ Let's take a look at a case study: an ecommerce store. We know that multiple dev
 
 We also know that multiple operations or services are running with each other to ensure the regular functioning of your ecommerce applications. Some of these services are account creation, displaying product catalog, building and validating your shopping cart, generating bill, order confirmation, payment mechanism and so on. 
 
-In a monolithic application, all these services run under a single application layer, so the ecommerce software architecture would look like this:
+In a monolithic application, all these services run under a single application layer so that the ecommerce software architecture would look like this:
 
 ![Monolithic Application](../images/microservices-docker-image-two.png)
 
@@ -69,36 +69,36 @@ Now, to understand how we have evolved in the IT infrastructure space, let us ta
 
 The first picture shows a physical machine or a hardware server. Typically, when we build applications, we use the resources provided by our host OS and the same pattern used to be followed when deploying the application. But what if you want to scale the application? At some point, you might want another hardware server and as the number keeps increasing, so does your cost and other resources like hardware and energy consumptions.
 
-Also, you might be thinking if you really require all the resources of your hardware and host OS at the same time for running your application. Not really, so then why such a massive infrastructure?
+Also, you might be thinking if you require all the resources of your hardware and host OS at the same time for running your application. Not really, so then why such a massive infrastructure?
 
 This has led to the evolution of hardware virtualization for optimizing IT infrastructure setups through what we call today as Virtual Machines (VMs). As you see in the second diagram, VMs have their guest OS which is run over a single physical machine or host OS. This enables us to run multiple applications without needing installing numerous physical machines. The host OS can ensure that there are systematic resource distribution and load balancing between the different VMs running on it.
 
-Although VMs made software easier to maintain and drastically reduced costs, more optimization was still possible. For instance, not all applications would behave as expected in a guest OS environment. Additionally, the guest OS would require a lot of resources for even running simple processes. 
+Although VMs made software more accessible to maintain and drastically reduced costs, more optimization was still possible. For instance, not all applications would behave as expected in a guest OS environment. Additionally, the guest OS would require a lot of resources for even running simple processes. 
 
 These problems led to the next innovation: containerization.
 Unlike virtual machines which were more operating system specific, containers are application specific, making them far lighter. Furthermore, VMs can run multiple processes whereas a container runs as a single process. This leads us to two things:
 1. You can run multiple containers on a physical machine, or you can even think of running it on a single VM. In either case, it solves your application related problems
-2. Containerization is not a competition to Virtualization but rather a complementary factor to further optimize your IT software infrastructure
+2. Containerization is not competition with Virtualization, but rather a complementary factor to further optimize your IT software infrastructure
 
 ## Docker
 
 Now that we understand the evolution of IT software infrastructure, we might want to know how we can achieve things like `Microservices Architecture` and `Containerization` that we discussed earlier? A simple answer to this could be, `Docker`.
 
-[Docker](https://www.docker.com/) is the world's leading software containerization platform. It basically encapsulates your microservice into what we call as `Docker container` which can then be independently maintained and deployed. Each of these containers will be responsible for one specific business functionality.
+[Docker](https://www.docker.com/) is the world's leading software containerization platform. It encapsulates your microservice into what we call as `Docker container` which can then be independently maintained and deployed. Each of these containers will be responsible for one specific business functionality.
 
-In order to understand Docker in a little more depth, let us take the same example of an ecommerce website that we discussed earlier. We know that it will have multiple operations and services such as account creation, displaying product catalog, building and validation shopping cart and so on. In a microservice architecture, all these can be treated as microservices and encapsulated in a Docker container. But why would you do that?
+To understand Docker in a little more depth, let us take the same example of an ecommerce website that we discussed earlier. We know that it will have multiple operations and services such as account creation, displaying product catalog, building and validation shopping cart and so on. In a microservice architecture, all these can be treated as microservices and encapsulated in a Docker container. But why would you do that?
 
-One of the reasons would be to ensure consistency between development and production environment. For instance, consider that there are three developers working on this application. Each of them having their own environments. So one developer might be running `Windows` OS on his machine, while the second developer could be running `Mac` OS and the third developer would prefer a `Linux` based OS. Each of them would take hours of efforts to install the application in their respective development environments and an additional set of efforts to later deploy the same application on the cloud. This is definitely not smooth and there is a lot of friction to port such applications to cloud infrastructure.
+One of the reasons would be to ensure consistency between development and production environment. For instance, consider that three developers are working on this application. Each of them having their environments. So one developer might be running `Windows` OS on his machine, while the second developer could be running `Mac` OS and the third developer would prefer a `Linux` based OS. Each of them would take hours to install the application in their respective development environments and hours to deploy the same app on the cloud. This is not smooth, and there is a lot of friction to port such applications to cloud infrastructure.
 
-With Docker, you can make your application independent of the host environment. Since you have microservices architecture, you can now encapsulate each of them in Docker containers. Docker containers are light weight, resource isolated environments through which you can build, maintain, ship and deploy your applcation.
+With Docker, you can make your application independent of the host environment. Since you have microservices, you can now encapsulate each of them in Docker containers. Docker containers are lightweight, resource isolated environments through which you can build, maintain, ship and deploy your application.
 
 > Advantages
 
-1. Docker is a popular evolving software with an excellent community support and built for microservices
-2. It is light weight when compared to VMs making it cost and resource effective
-3. It provides uniformity across development and production environments making it a suitable fit for building cloud native applications
-4. It provides facilities for continuous integration and deployment
-5. Docker is not going anywhere, it provides integration with popular tools and services such as AWS, Microsoft Azure, Ansible, Kubernetes, Istio and lot more
+1. Docker is a popular evolving software with excellent community support and built for microservices
+2. It is lightweight when compared to VMs making it cost and resource effective
+3. It provides uniformity across development and production environments making it a suitable fit for building cloud-native applications
+4. It offers facilities for continuous integration and deployment
+5. Docker is not going anywhere. It provides integration with popular tools and services such as AWS, Microsoft Azure, Ansible, Kubernetes, Istio and lot more
 
 ## Conclusion
 
