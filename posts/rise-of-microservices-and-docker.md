@@ -1,8 +1,6 @@
 # Rise of Microservices and Docker
 
-Are you a software engineer/developer/coder or may be even a tech enthusiast who has been hearing of terms like `Microservices` and `Docker`? 
-
-Are you someone who has been encountering these terminologies so often through various channels like articles, news, blogs, meetups, conferences but still clueless as to why there is so much hype around it?
+Are you a software engineer/developer/coder or may be even a tech enthusiast who has been hearing of terms like `Microservices` and `Docker` but still clueless as to why there is so much hype around it?
 
 If yes, then you are at the right place. This is a must read blog for you!
 
@@ -88,7 +86,21 @@ These problems, led to our next innovation which is containerization. Unlike vir
 
 Now that we understand the evolution of IT software infrastructure, we might want to know how can we achieve things like `Microservices Architecture` and `Containerization` that we discussed earlier? A simple answer to this could be, `Docker`.
 
-[Docker](https://www.docker.com/) is the world's leading software containerization platform with excellent community support. It allows you to modernize your application, and ensures frictionless portability of your applications to cloud infrastructure. It also provides facilities for continuous integration and deployment, managing and scheduling of containers and lot more.
+[Docker](https://www.docker.com/) is the world's leading software containerization platform. It basically encapsulates your microservice into what we call as `Docker container` which can then be independently maintained and deployed. Each of these containers will be responsible for one specific business functionality.
+
+In order to understand Docker in a little more depth, let us take the same example of an ecommerce website that we discussed earlier. We know that it will have multiple operations and services such as account creation, displaying product catalog, building and validation shopping cart and so on. In a microservice architecture, all these can be treated as microservices and encapsulated in a Docker container. But why would you do that?
+
+One of the reasons would be to ensure consistency between development and production environment. For instance, consider that there are three developers working on this application. Each of them having their own environments. So one developer might be running `Windows` OS on his machine, while the second developer could be running `Mac` OS and the third developer would prefer a `Linux` based OS. Each of them would take hours of efforts to install the application in their respective development environments and an additional set of efforts to later deploy the same application on the cloud. This is definitely not smooth and there is a lot of friction to port such applications to cloud infrastructure.
+
+With Docker, you can make your application independent of the host environment. Since you have microservices architecture, you can now encapsulate each of them in Docker containers. Docker containers are light weight, resource isolated environments through which you can build, maintain, ship and deploy your applcation.
+
+> Advantages
+
+1. Docker is a popular evolving software with an excellent community support and built for microservices
+2. It is light weight when compared to VMs making it cost and resource effective
+3. It provides uniformity across development and production environments making it a suitable fit for building cloud native applications
+4. It provides facilities for continuous integration and deployment
+5. Docker is not going anywhere, it provides integration with popular tools and services such as AWS, Microsoft Azure, Ansible, Kubernetes, Istio and lot more
 
 ## Conclusion
 
