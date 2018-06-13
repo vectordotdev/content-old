@@ -42,6 +42,12 @@ app.listen(3000, () => console.log('Listening to port 3000!'))
 
 Let's have a look at what happens under the hood when you run your application. When an error is encountered in JavaScript, the interpreter stops whatever it's doing and then throws an exception. The throw here refers to JavaScript's throw mechanism. The execution of the current function stops and the interpreter starts looking for a catch block so that the application doesn't terminate. However, when it doesn't find one, it jumps out of the current function and all the other functions on top of it in the call stack until an exception handler is found. When it reaches the top-level function that started the execution, it terminates the program because no exception handling mechanism was found. That's when Node returns an error screen in the console.
 
+Here's a simple demonstration of how JavaScript creates a call stack. 
+![Call Stack]("../images/JavaScript-error-handling-mechanism-Image-2.jpg)
+As you can see, the current function that's being executed will be at the top of the stack. Imagine that we're throwing an error inside `multiply(x,y)` because the input fails some validation condition. This scenario is exemplified below:
+![Try/Catch for JavaScript Error handling]("../images/JavaScript-error-handling-mechanism-Image-3.jpg)
+The interpreter jumps out of all the functions in the stack until it finds a catch block. That's where you can place the logic to handle your errors. Otherwise, the program gets terminated.
+
 Crashing an application with every error would be disastrous. Instead, we need more reliable and novel techniques to handle exceptions and then let the user know that an error has occurred. Standard JavaScript errors and system errors throw an error object which is an instance of the Error class. The error object has information about the type of error, a message and a stack trace that can help you debug your application during development.
 
 ## How to handle errors in Express.js
@@ -49,6 +55,8 @@ Crashing an application with every error would be disastrous. Instead, we need m
 ### Express Middlewares
 
 An Express application is essentially a series of middleware function calls that get invoked after the server receives a request and before a response is generated. Each middleware function has access to the request object, the response object, and the next function in the request-response cycle. The next function takes the control to the next middleware that succeeds the current middleware.
+
+![Error handling middleware in Express.js]("../images/Express-middlewares-and-error-handling-Image-1.jpg)
 
 Express.js has a built-in error handling middleware that can be used to report any errors.  The error handling middleware should be placed towards the end of your app.js file - after all the `app.use` calls so that it's the last middleware to be invoked in the request-response cycle. Unlike an ordinary middleware function, error middleware has four arguments instead of three: `(err, req, res, next)`.
 
