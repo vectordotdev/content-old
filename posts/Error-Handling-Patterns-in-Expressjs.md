@@ -1,7 +1,7 @@
 # Error Handling Patterns in Express.js
 
 
-Building an application isn't just about writing code that works. It's about making your program run flawlessly, so it behaves well when you encounter unexpected conditions. There are at large two types of errors in JavaScript: programmer errors and real-time errors. The programmer errors are fixable during development, while real-time, operational errors are not predictable. You need an efficient error handling mechanism that keeps your Node server stable regardless of its type.
+Building an application isn't just about writing code that works. It's about making your program run flawlessly, so it behaves well when you encounter unexpected conditions. There are two types of errors in JavaScript: programmer errors and real-time errors. The programmer errors are fixable during development, while real-time, operational errors are not predictable. You need an efficient error handling mechanism that keeps your Node server stable regardless of its type.
 
 The objective of this tutorial is to teach you different ways that you can handle JavaScript errors for your Express server. 
 
@@ -20,7 +20,7 @@ Use the `npm install` script to generate a *package.json* file. I prefer to set 
 npm install express --save
 npm install -g nodemon
 ```
-I've installed nodemon which is an essential development tool for a Node.js application. nodemon will watch all the files in the demo-app directory and if any changes are detected, nodemon will automatically restart your application. If *app.js* is the entry file, you can run `nodemon node app.js` and nodemon will take it from there. 
+I've installed nodemon which is an essential development tool for a Node.js application. nodemon will watch all the files in the demo-app directory, and if any changes are detected, nodemon will automatically restart your application. If *app.js* is the entry file, you can run `nodemon node app.js` and nodemon will take it from there. 
 
 Here is a very basic middleware to test that everything's in place:
 
@@ -54,7 +54,7 @@ Crashing an application with every error would be disastrous. Instead, we need m
 
 ### Express Middlewares
 
-An Express application is essentially a series of middleware function calls that get invoked after the server receives a request and before a response is generated. Each middleware function has access to the request object, the response object, and the next function in the request-response cycle. The next function takes the control to the next middleware that succeeds the current middleware.
+An Express application is basically a series of middleware function calls that get invoked after the server receives a request and before a response is generated. Each middleware function has access to the request object, the response object, and the next function in the request-response cycle. The following function takes the control to the next middleware that succeeds the current middleware.
 
 ![Error handling middleware in Express.js](../images/Express-middlewares-and-error-handling-Image-1.jpg)
 
@@ -210,7 +210,7 @@ const wrapperMiddleware = fn =>
   };
 ```
   
-WrapperMiddleware accepts a function as an argument so we resolve the function inside our wrapper. We pass the function to `Promise.resolve` and it resolves to whatever value returned by the route handler. If an error occurs and the wrapper receives a rejected promise, the catch block will be invoked. 
+WrapperMiddleware accepts a function as an argument, so we resolve the function inside our wrapper. We pass the function to `Promise.resolve` and it determines the value returned by the route handler. If an error occurs and the wrapper receives a rejected promise, the catch block will be invoked. 
 
 ```
 router.get('/users', wrapperMiddleware(async (req, res, next) => {
@@ -223,5 +223,4 @@ router.get('/users', wrapperMiddleware(async (req, res, next) => {
 }));
 
 ```
-
 In my opinion, this is the best method to handle asynchronous errors in Express, and it looks cleaner than Promises.
