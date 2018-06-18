@@ -140,7 +140,7 @@ logFormatter = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=logFormatter)
 ```
 
-#### Structured Data
+### Structured Data
 
 The _biggest_ issue we’ve seen is the pollution of log messages. People will put objects or variables into the log. Though it’s helpful while debugging your code, it’s impossible to decipher what you were thinking when looking at the stream in the future. The best way to deal with this is to push all your metadata to the `extra` object. Using this, you’ll be able to decipher your messages from the stream, while still grab the full context to dig deeper into your user from any messages.
 
@@ -316,7 +316,7 @@ cat error.log | grep "warning"
 
 Logs can be a pain to deal with. That’s why we recommend a [cloud-based provider](https://timber.io/) that can deal with aggregating the logs and making them intuitive, but it’s difficult to try new technology when the payoff isn’t visible.
 
-#### Source of Truth
+### Logs as a Source of Truth
 
 If you take anything away from this post, it should be that logs serve as the _source of truth_ for the user’s actions. Even for ephemeral actions, such as putting an item into and out of a cart, it’s essential to be able to trace the user’s steps during a bug report, and the logs allow you to determine their actions between all your [MicroServices](https://timber.io/blog/docker-and-the-rise-of-microservices/).
 
