@@ -1,24 +1,44 @@
 # Logging in Python: Becoming a More Effective Developer
 
-Logging is a development practice we all know we should be doing but is something that is rarely done correctly. I'm known to do this as well -- for me, it's perpetually pushed off until tomorrow. From now, I'm going to hold myself to a higher standard (and I think you should too!).
+Logging is a development practice we all know we should be doing but is something that is rarely done correctly. I'm known to do this as well -- for me, it's perpetually pushed off. From now, I'm going to hold myself to a higher standard (and I think you should too!).
 
-If you already know the basics, feel free to skip to the bottom. Even if you know your way around the logging module in Python, I’m confident you’ll be able to take something away from this post. 
+If you already know the basics, feel free to skip to the bottom. Even if you know your way around the logging module in Python, I’m confident you’ll be able to take something away from this post.
 
-### Why bother?
+## The Drawbacks?
 
-It seems like it would just be easier to `print` rather than learning the best practices associated with logging. 
+I find that most guides tend to skip the negatives of using the tool they’ve been trying to teach you. It’s important to understand where logs fit in when it comes to observing your application. I agree very much with the [3 pillars of observability](https://speakerdeck.com/adriancole/observability-3-ways-logging-metrics-and-tracing?slide=1) principle, in that logs should be one of a few tools you reach for when observing your application. To summarize the points:
+
+_Logs are expensive_, especially at scale. With great detail comes high costs. There are certain tactics you can employ to reduce the cost, but the nature of logging makes it more expensive.
+
+_Logs are overwhelming_. Logs are a firehose of information and impossible for a human to understand at scale.
+
+_Logs are often your most valuable tool_. The value you extract from your logs is entirely up to you. If done properly logs can, by far, be your most valuable observability tool. Any experienced developer can tell you many stories of times logs provided the detail they needed to debug a problem.
+
+_Logs let you answer unknown questions_. Because logs capture your raw event data you can derive answers to just about any question you think of in the future, especially questions that rely on high cardinality attributes.
+
+_Logs tell stories_. Logs let you answer questions such as: Why did John Doe receive an error during checkout yesterday? What inputs did he provide?
+
+### Metrics
+
+Metrics allow you to fix some of these issues. They allow you to aggregate data and answer questions about your customers without having to keep a trace of every action, but they lack detail when you discover something is wrong. This does come with some benefits: metrics are cheap. Maybe not exactly cheap when you're dealing with millions of customers at scale, but definitely cheaper than logs. You just have to decide what's important to you.
+
+When you're forced to decide the questions you want to answer before your data starts flowing, you have to start with a base layer of assumptions about your users (and most companies aren't fortunate enough to be right about the way their users will react to their products).
+
+### print('Why not just use the print statement?')
+
+It seems like it would just be easier to `print` rather than learning the best practices associated with logging.
 
 ```python
 dogs = ["Retriever", "Labrador", "Bulldog"]
 for dog in dogs:
-	print(dog)
+    print(dog)
 ```
 
 When you're working alone on a small project, you can do this. I wouldn't recommend it because the logging package is easy enough to set up that it still makes sense to follow best practices, but you won't struggle to understand your print statements.
 
-**So why bother with the logging module?**
+## logging.info("Hello World to Logging")
 
-The logging module automatically adds context, such as line number & timestamps, to your logs. The module makes it easy to add severity levels so you can see what is most relevant to your task. When I first approached the [logging module documentation](https://docs.python.org/3/library/logging.html), I found it hard to understand. Not only will I show you how to log in Python, but also some best practices you can follow to make, so you're not slamming your head against your keyboard in a couple of months.
+The logging module automatically adds context, such as line number & timestamps, to your logs. The module makes it easy to add severity levels so you can see what is most relevant to your task. When I first approached the [logging module documentation](https://docs.python.org/3/library/logging.html), I found it hard to understand. Not only will I show you how to log in Python, but also some best practices you can follow to make, so you're not slamming your head against the keyboard in a couple of months.
 
 As Martin Golding said:
 > Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live.
@@ -37,14 +57,6 @@ If you log effectively, it's possible for you to see issues as they occur, befor
 
 At times, things will go wrong with your software. The best you can do is to minimize the number of times this happens. When a user does reach out with an issue, the application logs serve as a source of truth of what the user has done and what has broken.
 
-#### Logging isn’t Perfect
-
-I find that most guides tend to skip the negatives of using the tool they’ve been trying to teach you. It’s important to understand that there are both pros and cons associated with using all these tools.
-
-_Logs are expensive_. There’s no getting around it, especially when you’re at scale, logs not only allow you to inspect the user’s state at any point in time but also trace how they got to that point. 
-
-You can use metrics to get around this. Metrics allow you to aggregate data and answer questions about your customers without having to keep a trace of every action a user has taken. The biggest issue with metrics is that you have to decide the question you want to answer before collecting the data, but they allow to create insights for cheap. 
-
 ## Writing Effective Logs
 
 ***It's seriously this easy...***
@@ -62,11 +74,11 @@ Never seen `__name__` before? You might have seen this with `if __name__ == "__m
 
 ### Levels
 
-Like any good logging module, the one included with the Python library allows you to differentiate between logs of different importance.
+Like most other good logging modules, the Python module is a `leveled logger`, meaning it allows you to differentiate between logs of different importance.
 
 Imagine if a log message saying that a server was melting down was buried between thousands of messages of users signing in. You want to store all this information but should react differently to these messages.
 
-There are five levels defined in the module, making it easy to differentiate between messages. Though you don’t have to follow by these guidelines, it makes it easy only to pay attention to the relevant messages. 
+There are five levels defined in the module, making it easy to differentiate between messages.
 
 ![](./images/loggingPython/loggingLevels.jpeg)
 
@@ -78,11 +90,15 @@ logger.info("show user flow through program")
 logger.debug("used to track variables when coding, but ignored in prod")
 ```
 
-#### Performance
+### Performance
 
-Even with Python (a language that is notoriously slow), it’s important to think about your performance. When creating programs that are built-to-scale, you don’t unnecessarily want to waste CPU cycles because multiplied by a million users, that [that could get expensive](https://www.youtube.com/watch?v=uyIlAO390v4).
+Even with Python, it’s important to think about your performance. When creating programs that are built-to-scale, you don’t unnecessarily want to waste CPU cycles because multiplied by a million users, [that could get expensive](https://www.youtube.com/watch?v=uyIlAO390v4).
 
-How can we fix this while still using the logging module to its full capabilities Fortunately, the module has built-in the ability to ignore log messages of lower levels, so memory isn’t allocated, and CPU cycles aren’t wasted for log messages that don’t provide valuable information. 
+Many developers share the fallacy to 'log everything'. While logs can be helpful for insight, they do take a toll on performance. We've seen a single log statement take down an entire system. So how do you find the right balance? Here are a few helpful tips:
+
+1. Use the appropriate level
+
+The module can ignore log messages of lower levels, so memory isn’t allocated, and CPU cycles aren’t wasted for log messages that don’t provide valuable information.
 
 Let’s see what that means:
 ```python
@@ -95,50 +111,26 @@ logger.setLevel(logging.WARNING)
 logger.info("2")
 ```
 
-We all know that feeling — getting angry at our program because it’s not acting as we expect and we spam print messages into our program trying to understand what’s going on. The moment we fix the issue, we’re forced to go back and delete those messages. Instead, it’s easy to set the level of the logger to ignore them. 
+I haven't seen [this](https://docs.python.org/3/howto/logging.html#optimization) written in other posts, but this could save you some serious processing power. It's beneficial when you're calling expensive functions from your logger because you can prevent these function calls from occurring if it's never going to be written.
+
+```python
+if logger.isEnabledFor(logging.INFO):
+    logger.debug('%s', expensive_func())
+```
+
+Now, `expensive_func` will only be called if the logging level is greater than or equal to `INFO`.
 
 *Sighs Relief.* Now you can write as much as you need to the log while debugging, then change the level of your logger before pushing to production.
 
-### Logging to a File
+2. Avoid Logging in the Hot Path
 
-Generally, you don't (just) want to log to the console for them to be deleted immediately. The logging module makes it easy to write your logs to a local file using a `handler`. 
+_Only log actionable information._ You must resist the urge to log data that does not meet this criteria.
 
-```python
-import logging
-logger = logging.getLogger(__name__)
-
-handler = logging.FileHandler('myLogs.log')
-handler.setLevel(logging.INFO)
-
-logger.addHandler(handler)
-logger.info('You can find this written in myLogs.log')
-```
-
-### Logging to the Cloud
-
-Writing your logs to the cloud seriously makes your life so much easier, it serves as a layer of abstraction so you don’t have to worry how the logs are getting to the service and you can focus your time on what’s important.
-
-_Disclaimer: I’m a current employee @ Timber. This section is entirely optional, but I seriously believe that logging to the cloud will make your life easier (and you can try it for completely free)._
-
-```bash
-pip install timber
-```
-
-```python
-import logging
-import timber
-
-logger = logging.getLogger(__name__)
-
-timber_handler = timber.TimberHandler(api_key='...')
-logger.addHandler(timber_handler)
-```
-
-**That’s it.** All you need to do is get your API key from [timber.io](https://timber.io/) and you’ll be able to see your logs. We automatically capture them from the logging module, so you can continue to follow best-practices and log normally, while we seamlessly add context. 
+The hot path is code that is critical for performance, so it is executed a lot (millions/billions of times if you're working at scale). There's no reason to log the work being done here, doing so wastes CPU cycles. The log should serve as the source of truth when an action has been completed, not as proof that your code is being executed.
 
 ### Creating the _Picasso_ of Logs
- 
-Like a great painting, your logs need to paint a picture for the next person who looks at them. Most people dump the object or a breakpoint in their logs, but they’ll hate themselves in 2 years when they try to understand what was happening in their code. The logs _must_ give the next developer a birds-eye-view into the actions taken by the user up to a point in time. 
+
+Like a great painting, your logs need to paint a picture for the next person who looks at them. Most people dump the object or a breakpoint in their logs, but they’ll hate themselves in 2 years when they try to understand what was happening in their code. The logs _must_ give the next developer a birds-eye-view into the actions taken by the user up to a point in time.
 
 A generic log message provides just about as little information as no log message. Imagine if you had to go through your logs and you saw `purchase completed`. This doesn’t help you answer any questions. *When was the purchase completed? Who completed it? What did they buy?*
 
@@ -165,16 +157,16 @@ If you’re wondering why you do not see your logs, remember to change the `leve
 
 ### Tracking Exceptions through Logs
 
-Some companies have made it their core competency helping you capture and react to exceptions. If you’re just a hobbyist, it’s pretty easy to capture your errors yourself and write them to your logs. 
+Some companies have made it their core competency helping you capture and react to exceptions. If you’re just a hobbyist, it’s pretty easy to capture your errors yourself and write them to your logs.
 
 ```python
 def captureException():
-	# this should do something
+    # this should do something
 
 try:
-	1/0
+    1/0
 except:
-	captureException()
+    captureException()
 ```
 
 When capturing an exception, it’s essential to add context. Similar to when you’re debugging, you want to know who the user is and what they were doing when the exception struck.
@@ -185,12 +177,12 @@ import sys
 # remember to set up your logger
 
 def captureException():
-	logger.warning(sys.exc_info())
+    logger.warning(sys.exc_info())
 ```
 
 ![](./images/loggingPython/exception1.png)
 
-This gives us a `traceback` object that we can use to see the stack from our exception. We didn’t even need to pass anything into our `captureException` method. 
+This gives us a `traceback` object that we can use to see the stack from our exception. We didn’t even need to pass anything into our `captureException` method.
 
 Let’s figure out what the `traceback` object gives us and clean up this information a little.
 
@@ -199,34 +191,76 @@ import sys
 import traceback
 
 def captureException():
-	r = list(sys.exc_info())
-	
-	e = dict()
-	e["name"] = r[1]
+    r = list(sys.exc_info())
+
+    e = dict()
+    e["name"] = r[1]
 ```
 
 ![](./images/loggingPython/exception2.png)
 
 Now, this can be cleaned up using some string manipulation in Python.
 
-## Accessing those Logs
+## Storing & Accessing These Logs
+
+Now that you've learned to write these (beautiful) logs, you've got to learn what to do with them. I mean it would be a waste to write them to the console and leave them to be deleted when the program closes.
+
+### Logging to a File
+
+Generally, you don't (just) want to log to the console for them to be deleted immediately. The logging module makes it easy to write your logs to a local file using a `handler`.
+
+```python
+import logging
+logger = logging.getLogger(__name__)
+
+handler = logging.FileHandler('myLogs.log')
+handler.setLevel(logging.INFO)
+
+logger.addHandler(handler)
+logger.info('You can find this written in myLogs.log')
+```
+
+### Logging to the Cloud
+
+Writing your logs to the cloud seriously makes your life easier, it serves as a layer of abstraction so you don’t have to worry how they are getting to the service and you can focus your time on what’s important.
+
+![Timber](./images/loggingPython/timber.png)
+
+_Disclaimer: I’m a current employee @ Timber. This section is entirely optional, but I sincerely believe that logging to the cloud will make your life easier (and you can try it for completely free)._
+
+```bash
+pip install timber
+```
+
+```python
+import logging
+import timber
+
+logger = logging.getLogger(__name__)
+
+timber_handler = timber.TimberHandler(api_key='...')
+logger.addHandler(timber_handler)
+```
+
+**That’s it.** All you need to do is get your API key from [timber.io](https://timber.io/), and you’ll be able to see your logs. We automatically capture them from the logging module, so you can continue to follow best-practices and log normally, while we seamlessly add context.
 
 Now that you’ve created _gorgeous_ logs that give the next developer a view of the user’s actions, you need to know best practices for searching and reacting to these logs.
 
 ### Searching
 
-Going through your logs from a file is a tedious process, it’s honestly better to use a [cloud-based solution](https://timber.io/) that acts as a layer of abstraction, so you don’t have to think about parsing colossal log files.
+Going through your logs from a file is a tedious process, it’s honestly better to use a [cloud-based solution](https://timber.io/) that acts as a layer of abstraction, so you don’t have to think about parsing huge log files.
 
 If you’re dead-set on searching through your files locally, Python is one of the best languages to do so. Here is an example that generalizes the text and log file:
+
 ```python
 def search(input_filename, output_filename, text):
-	# overwrite output file
-	with open(output_filename, "w") as out_file:
-		with open(input_filename) as in_file:
-			# loop over each log line and check if text appears
-			for line in in_file:
-				if text in line:
-					out_file.write(line)
+    # overwrite output file
+    with open(output_filename, "w") as out_file:
+        with open(input_filename) as in_file:
+            # loop over each log line and check if text appears
+            for line in in_file:
+                if text in line:
+                    out_file.write(line)
 ```
 
 This makes it easy to search for log messages that contain keywords such as `critical` or `warning`.
@@ -235,7 +269,7 @@ This makes it easy to search for log messages that contain keywords such as `cri
 
 Though not generally taught in logging guides, the Python logging module makes it easy to log in a different file after an interval of time or after the log file reaches a certain size.
 
-This becomes useful if you automatically want to get rid of older logs, or if you're going to search through your logs by date, since you won’t have to search through a huge file to find a set of logs that are already grouped.
+This becomes useful if you automatically want to get rid of older logs, or if you're going to search through your logs by date since you won’t have to search through a huge file to find a set of logs that are already grouped.
 
 To create a `handler` that makes a new log file every day and automatically deletes logs more than five days old, you can use a `TimedRotatingFileHandler`. Here’s an example:
 
@@ -252,9 +286,9 @@ handler = TimedRotatingFileHandler(pathToLog, when="d", interval=1,  backupCount
 
 When troubleshooting an issue on your server, you might have to check your error logs. The best way to do that is to SSH into your server.
 
-If you don’t know how to SSH into your server, [here](https://help.dreamhost.com/hc/en-us/articles/216041267-SSH-overview) is a great guide that explains how.
+If you don’t know how to SSH into your server, [here](https://help.dreamhost.com/hc/en-us/articles/216041267-SSH-overview) is an excellent guide that explains how.
 
-Once you are connected, you can go to the `logs` folder. 
+Once you are connected, you can go to the `logs` folder.
 ```bash
 cd logs
 ```
@@ -280,11 +314,11 @@ cat error.log | grep "warning"
 
 ## Wrapping Up
 
-Logs can be a pain to deal with. That’s why we recommend a [cloud-based provider](https://timber.io/) that can deal with aggregating the logs and making them intuitive, but it’s difficult to try new technology when the payoff isn’t obvious. 
+Logs can be a pain to deal with. That’s why we recommend a [cloud-based provider](https://timber.io/) that can deal with aggregating the logs and making them intuitive, but it’s difficult to try new technology when the payoff isn’t visible.
 
 #### Source of Truth
 
-If you take anything away from this post, it should be that logs serve as the _source of truth_ for the user’s actions. Even for ephemeral actions, such as putting an item into and out of a cart, it’s essential to be able to trace the user’s steps during a bug report and the logs allow you to trace their actions between all your [MicroServices](https://timber.io/blog/docker-and-the-rise-of-microservices/).
+If you take anything away from this post, it should be that logs serve as the _source of truth_ for the user’s actions. Even for ephemeral actions, such as putting an item into and out of a cart, it’s essential to be able to trace the user’s steps during a bug report, and the logs allow you to determine their actions between all your [MicroServices](https://timber.io/blog/docker-and-the-rise-of-microservices/).
 
 ***Instead of doing this yourself, we’ve got a pretty awesome service [here @ Timber](https://timber.io/) (it’s seriously great) that automatically captures context with your logs to make debugging easier. Try us out for (completely) free; you don’t even need a credit card!***
 
