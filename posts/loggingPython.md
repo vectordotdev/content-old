@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 logger.info('logging is easier than I was expecting')
 ```
 
-Never seen `__name__` before? You might have seen this with `if __name__ == "__main__":`.  You don't have to use it with the logger, but _it allows you to see what file the log is coming from when you read the logs_. Basically, `__name__` allows you to see what file you are currently in if the file was imported _OR_ it will return `__main__` if you started your script from that file. [Here](https://www.youtube.com/watch?v=sugvnHA7ElY)) is a video that explains it well (and goes by quickly @ 2x speed).
+Never seen `__name__` before? You might have seen this with `if __name__ == "__main__":`.  You don't have to use it, but it creates a logging instance that is isolated to the current Python module. Calling `logging.getLogger(__name__)` repeatedly will result in the same logger instance being returned. This instance can be configured separately from other logger instances, such as setting it to a different level or adding different handlers.
 
 ### print('Why not just use the print statement?')
 
