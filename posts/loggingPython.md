@@ -31,6 +31,7 @@ Fortunately, logging has been a part of the Python standard library since versio
 
 ```python
 import logging
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 logger.info('logging is easier than I was expecting')
@@ -81,11 +82,12 @@ Let’s see what that means:
 ```python
 # should show up; info is a higher level than debug
 logger.setLevel(logging.DEBUG)
-logger.info("1")
+logger.info(1)
+>>> INFO:__main__:1
 
 # shouldn't show up; info is a lower level than warning
 logger.setLevel(logging.WARNING)
-logger.info("2")
+logger.info(2)
 ```
 
 ### Performance
@@ -151,6 +153,7 @@ handler.setLevel(logging.INFO)
 
 logger.addHandler(handler)
 logger.info('You can find this written in myLogs.log')
+>>> INFO:__main__:You can find this written in myLogs.log
 ```
 
 ### Searching
