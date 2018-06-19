@@ -81,7 +81,7 @@ INFO:root:1
 
 The default formatter is not useful for formatting your logs, because it doesn't include critical information. The logging module makes it easy for you to add it in by changing the format.
 
-We'll set the format to show the time, user, level, and message:
+We'll set the format to show the time, level, and message:
 
 ```python
 >>> import logging
@@ -180,7 +180,7 @@ _Logging can become expensive_, especially at scale. Metrics can be used to aggr
 
 ## Wrapping Up
 
-If you take anything away from this post, it should be that logs serve as the _source of truth_ for the user’s actions. Even for ephemeral actions, such as putting an item into and out of a cart, it’s essential to be able to trace the user’s steps during a bug report, and the logs allow you to determine their actions.
+If you take anything away from this post, it should be that logs serve as the _source of truth_ for the user’s actions. Even for ephemeral actions, such as putting an item into and out of a cart, it’s essential to be able to trace the user’s steps for a bug report, and the logs allow you to determine their actions.
 
 The Python logging module makes this easy. It allows you to format your logs, dynamically differentiate between messages using levels, and ship your logs externally using "handlers". Though not the only mechanism you should be using to gain insight into user actions, it is an effective way to capture raw event data and answer unknown questions.
 
