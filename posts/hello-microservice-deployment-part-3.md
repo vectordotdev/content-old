@@ -50,7 +50,7 @@ When working with compute instances we need to continuously be aware of regions 
 
 
 First step is to reserve a static ip address. We have named ours `drone-ip`
-```
+```[bash]
 gcloud compute addresses create drone-ip --region europe-west1
 ```
 
@@ -60,7 +60,7 @@ Created [https://www.googleapis.com/compute/v1/projects/timber-tutorial/regions/
 ```
 
 Now take a look at it and take note of the actual ip address. We'll need it later:
-```
+```[bash]
 gcloud compute addresses describe drone-ip --region europe-west1
 ```
 This outputs something like:
@@ -80,7 +80,7 @@ So the ip address that I just reserved is `35.233.66.226`. Yours will be differe
 
 Alright, now create a VM
 
-```
+```[bash]
 gcloud compute instances create drone-vm --zone=europe-west1-d
 ```
 this outputs:
@@ -94,7 +94,7 @@ drone-vm  europe-west1-d  n1-standard-1               10.132.0.6   35.195.196.33
 Alright, now we have a VM and a static IP. We need to tie them together:
 
 First let's look at the existing configuration for our VM:
-```
+```[bash]
 gcloud compute instances describe drone-vm --zone=europe-west1-d
 ```
 This outputs a whole lot of stuff. Most importantly:
@@ -109,7 +109,7 @@ networkInterfaces:
 ```
 A VM can at most have one of accessConfig. We'll need to delete the existing one and replace it with a static ip address config. First we delete it:
 
-```
+```[bash]
 gcloud compute instances delete-access-config drone-vm \
     --access-config-name "external-nat" --zone=europe-west1-d
 ```
@@ -120,7 +120,7 @@ Updated [https://www.googleapis.com/compute/v1/projects/timber-tutorial/zones/eu
 
 Now we add new network configuration:
 
-```
+```[bash]
 gcloud compute instances add-access-config drone-vm \
     --access-config-name "drone-access-config" --address 35.233.66.226 --zone=europe-west1-d
 ```
@@ -133,7 +133,7 @@ Updated [https://www.googleapis.com/compute/v1/projects/timber-tutorial/zones/eu
 
 And now we need to configure the firewall to allow HTTP traffic. Google's firewall rules can be added and removed from specific instances through use of tags.
 
-```
+```[bash]
 gcloud compute instances add-tags drone-vm --tags http-server --zone=europe-west1-d
 ```
 This outputs:
@@ -152,17 +152,18 @@ In order to get Drone to run, we need to install Docker and Docker-Compose. Let'
 
 SSH into our VM. From your Google cloud shell like so:
 
-```
+```[bash]
 export PROJECT_ID="$(gcloud config get-value project -q)"
 
 gcloud compute --project ${PROJECT_ID} ssh --zone "europe-west1-d" "drone-vm"
 ```
+
 When it asks for passphrases you can leave them blank for the purpose of this tutorial. That said, it's not really good practice.
 
 Ok, now you have a shell into your new VM. Brilliant.
 
 Now enter:
-```
+```[bash]
 uname -a
 ```
 
@@ -171,98 +172,7 @@ This will output something like
 Linux drone-vm 4.9.0-6-amd64 #1 SMP Debian 4.9.88-1+deb9u1 (2018-05-07) x86_64 GNU/Linux
 ```
 
-Next up we install Docker:
-
-You can view the full instructions and explanation [here](https://docs.Docker.com/install/linux/Docker-ce/debian/). I've just taken the practical parts...
-
-First you need to set up the Docker repository:
-
-```
-
-yes | sudo apt-get install \
-     apt-transport-HTTPS \
-     ca-certificates \
-     curl \
-     gnupg2 \
-     software-properties-common
-
-curl -fsSL https://download.Docker.com/linux/debian/gpg | sudo apt-key add -
-sudo apt-key fingerprint 0EBFCD88
-```
-That last command should output:
-```
-pub   rsa4096 2017-02-22 [SCEA]
-      9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
-uid           [ unknown] Docker Release (CE deb) <Docker@Docker.com>
-sub   rsa4096 2017-02-22 [S]
-```
-
-Now do this:
-```
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.Docker.com/linux/debian \
-   $(lsb_release -cs) \
-   stable"
-```
-
-Now you can use apt-get to do the installation for you:
-```
-sudo apt-get update
-yes | sudo apt-get install Docker-ce
-```
-
-To verify your installation:
-```
-sudo Docker run hello-world
-```
-this should eventually output:
-```
-Hello from Docker!
-This message shows that your installation appears to be working correctly.
-To generate this message, Docker took the following steps:
- 1. The Docker client contacted the Docker daemon.
- 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
-    (amd64)
- 3. The Docker daemon created a new container from that image which runs the
-    executable that produces the output you are currently reading.
- 4. The Docker daemon streamed that output to the Docker client, which sent it
-    to your terminal.
-To try something more ambitious, you can run an Ubuntu container with:
- $ Docker run -it ubuntu bash
-Share images, automate workflows, and more with a free Docker ID:
- https://hub.Docker.com/
-For more examples and ideas, visit:
- https://docs.Docker.com/engine/userguide/
-```
-
-Now make sure you don't need to `sudo` to use drone:
-```
-sudo groupadd Docker
-sudo usermod -aG Docker $USER
-```
-
-Exit and ssh back in. Now this should work:
-
-```
-Docker run hello-world
-# note the lack of sudo this time
-```
-
-Alright, next up we install Docker-compose.
-
-This is fairly straight-forward. Full instructions can be found here: https://docs.Docker.com/compose/install/#install-compose
-
-```
-sudo curl -L https://github.com/Docker/compose/releases/download/1.21.2/Docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/Docker-compose
-sudo chmod +x /usr/local/bin/Docker-compose
-Docker-compose --version
-```
-
-The last command will output something like:
-
-```
-Docker-compose version 1.21.2, build a133471
-```
+Next up we [install Docker](https://docs.Docker.com/install/linux/Docker-ce/debian/) and [docker-compose](https://docs.Docker.com/compose/install/#install-compose)
 
 ### Generate Gitlab oAuth credentials
 
@@ -280,13 +190,13 @@ You can refer to the [drone documentation](http://docs.drone.io/installation/) f
 
 First we'll need to set up some environmental variables. Let's make a new file called `.drone_secrets.sh`
 
-```
+```[bash]
 nano .drone_secrets.sh
 ```
 
 This opens an editor.  Paste the following into the editor
 
-```
+```[bash]
 #!/bin/sh
 
 export DRONE_HOST=http://35.233.66.226
@@ -307,7 +217,7 @@ You'll need to update is a little bit:
 Once you have finished editing the file then press: `Ctrl+x` then `y` then `enter` to save and exit.
 
 Now make it executable:
-```
+```[bash]
 chmod +x .drone_secrets.sh
 ```
 And load the secrets into your environment
@@ -317,13 +227,13 @@ source .drone_secrets.sh
 
 Cool, now let's make another file:
 
-```
+```[bash]
 nano Docker-compose.yml
 ```
 Paste in the following:
 
 
-```
+```[yml]
 version: '2'
 
 services:
@@ -361,8 +271,8 @@ Now this compose file requires a few environmental settings to be available. Luc
 
 Now run
 
-```
-Docker-compose up
+```[bash]
+docker-compose up
 ```
 
 There will be a whole lot of output. Open a new browser window and navigate to your drone host. In my case that is: `http://35.233.66.226`. You will be redirected to an oAuth authorization page on Gitlab. Choose to authorize access to your account. You will then be redirected back to your drone instance, and after a little while you will see a list of your repos.
@@ -371,7 +281,7 @@ Each repo will have a toggle button on the right of the page. Toggle whichever o
 
 ### Recap
 
-Alright! So far so good. We've got Drone.ci all set up and talking to Gitlab. Now we need to start the cool part, actually getting a pipeline to run!
+Alright! So far so good. We've got Drone.ci all set up and talking to Gitlab.
 
 ## Practical: Giving drone access to Google Cloud
 
@@ -381,7 +291,7 @@ We start off by creating a service account. This is sortof like a user. Like use
 
 Open up another Google cloud shell and do the following:
 
-```
+```[bash]
 gcloud iam service-accounts create drone-sa \
     --display-name "drone-sa"
 ```
@@ -392,7 +302,7 @@ Created service account [drone-sa].
 
 Now we want to give that service account permissions. It will need to push images to the Google cloud container registry (which is based on Google Storage), and it will need to roll out upgrades to our application deployment.
 
-```
+```[bash]
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member serviceAccount:drone-sa@${PROJECT_ID}.iam.gserviceaccount.com --role roles/storage.admin
 
@@ -418,7 +328,7 @@ bindings:
   - serviceAccount:service-241386104325@containerregistry.iam.gserviceaccount.com
   role: roles/editor
 - members:
-  - user:sheenaprelude@gmail.com
+  - user:yourname@gmail.com
   role: roles/owner
 - members:
   - serviceAccount:drone-sa@timber-tutorial.iam.gserviceaccount.com
@@ -428,13 +338,13 @@ version: 1
 ```
 
 If you wanted to give your drone instance access to other Google cloud functionality (for example if you needed it to interact with App Engine), you can get a full list of available roles like so:
-```
+```[bash]
 gcloud iam roles list
 ```
 
 Now we create some credentials for our service account. Any device with this key file will have all of the rights given to our service account. You can invalidate key files at any time. We are going to name our key `key.json`
 
-```
+```[bash]
 gcloud iam service-accounts keys create ~/key.json \
     --iam-account drone-sa@${PROJECT_ID}.iam.gserviceaccount.com
 ```
@@ -449,7 +359,7 @@ Now create a new secret called `GOOGLE_CREDENTIALS`
 
 Now in your Google cloud shell:
 
-```
+```[bash]
 cat key.json
 ```
 The output should be something like this:
@@ -477,7 +387,7 @@ Now Drone has access to our Google Cloud resources (although we still need to te
 
 It's time to put something in your tutorial-timber-deploying-microservices repo. We'll just copy over everything from the repo created for this series of articles. In a terminal somewhere (your local computer, google cloud shell, or wherever):
 
-```
+```[bash]
 # clone the repo if you havent already and cd in
 git clone https://gitlab.com/sheena.oconnell/tutorial-timber-deploying-microservices.git
 cd tutorial-timber-deploying-microservices
@@ -495,7 +405,7 @@ This will kick off our pipeline. You can watch it happen in the drone web fronte
 
 Here is our full pipeline specification:
 
-```
+```[yaml]
 pipeline:
   unit-test:
     image: python:3
@@ -535,7 +445,7 @@ pipeline:
 As pipelines go, it's quite a small one. We have specified three steps: `unit-test`, `gcr` and `deploy`. It helps to keep Docker-compose in mind when working with drone. Each step is run as a Docker container. So each step is based on a Docker image. And for the most part you get to specify exactly what happens on those containers through use of `commands`.
 
 Let's start from the top.
-```
+```[yaml]
   unit-test:
     image: python:3
     commands:
@@ -545,7 +455,7 @@ Let's start from the top.
 
 This step is fairly straight forward. Whenever any changes are made to the repo (on any branch) then the unit tests are run. If the tests pass then drone will proceed to the next step. In our case all the rest of the steps only happen on the master branch, so if you are in a feature branch then the only thing this pipeline will do is run unit tests.
 
-```
+```[yaml]
   gcr:
     image: plugins/gcr
     registry: eu.gcr.io
@@ -564,7 +474,7 @@ The next thing is `secrets`. Remember that secret we copy-pasted into drone just
 
 The last step is a little more complex:
 
-```
+```[yaml]
 deploy:
     image: Google/cloud-sdk:latest
     environment:
@@ -590,7 +500,7 @@ Here our base image is supplied by Google. It gives us `gcloud` and a few bells 
 
 Now we have a bunch of commands. These execute in order and you should recognize most of it. The only really strange part is how we authenticate as our service account (`drone-sa`). The line that does the actual authentication is `gcloud auth activate-service-account --key-file key.json`. It requires a key file. Now ideally we would just do something like this:
 
-```
+```[yaml]
 - echo $GOOGLE_CREDENTIALS > key.json
 - gcloud auth activate-service-account --key-file key.json
 ```
@@ -601,7 +511,7 @@ Now that everything is set up, if you make a change to your code and push it to 
 
 Once the pipeline is complete you will be able to make sure that your deployment is updated by taking a look at the Pods on the gcloud command line:
 
-```
+```[bash]
 kubectl get pods
 ```
 outputs:
@@ -615,7 +525,7 @@ timber-tutorial-77d67cbfb8-p9bcd   1/1       Running   0          40s
 
 Now pick one and describe it:
 
-```
+```[bash]
 kubectl describe pod timber-tutorial-77d67cbfb8-flfxl
 ```
 
@@ -628,7 +538,6 @@ Containers:
 ```
 
 Now if you were to check your git log, the last commit to master that you pushed would have the commit SHA `cb5d5ca61661954d7d139b2a1d60060cba5c4f2f`. Isn't that neat?
-
 
 ## Conclusion
 
@@ -647,7 +556,7 @@ Sheena
 
 Clusters cost money so it would be best to shut it down if you aren't using it. Go back to the Google Cloud Shell and do the following:
 
-```
+``` [bash]
 kubectl delete service hello-timber-service
 
 ## now we need to wait a bit for Google to delete some forwarding rules for us. Keep an eye on them by executing this command:
@@ -657,10 +566,8 @@ gcloud compute forwarding-rules list
 gcloud container clusters delete hello-timber
 
 ## and delete the drone VM and it's ip address
-gcloud compute instances delete drone-vm --region europe-west1
-gcloud compute addresses delete drone-ip --region europe-west1
-
-
+yes | gcloud compute instances delete drone-vm --zone=europe-west1-d
+yes | gcloud compute addresses delete drone-ip --region=europe-west1
 ```
 
 
