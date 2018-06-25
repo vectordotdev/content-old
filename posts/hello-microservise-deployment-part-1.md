@@ -5,7 +5,7 @@ This article is the first of a three part series all about deploying microservic
 In [Part 2](http://todo) we'll get our application online by deploying it to a Kubernetes cluster that we set up ourselves on Google Cloud. We'll also deal with the basics of scaling and updating our application.
 In [Part 3](http://todo) we'll use Drone.io to set up a simple CI/CD pipeline. It will test our application and roll out any changes we make to the master branch of our repo.
 
-This series is very much the 'hello world' of microservices. We will not cover every aspect of designing, deploying, testing and monitoring your services (there are [entire books](https://www.amazon.com/gp/product/1492034029/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1492034029&linkCode=as2&tag=sheena0d-20&linkId=5574de8e1ec2bdcab78e56b31e09910f    TODO) written on that topic), but it will give you a pretty good idea of how to get started. I'll also point you to relevent resources along the way so you can deepen your knowledge on your own.
+This series is very much the 'hello world' of microservices. We will not cover every aspect of designing, deploying, testing and monitoring your services (there are [entire books](https://www.amazon.com/gp/product/1491950358/ref=as_li_tl?ie=UTF8&tag=sheena0d-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1491950358&linkId=af50b90636d80798e5e85c43a83d7b5f) written on that topic), but it will give you a pretty good idea of how to get started. I'll also point you to relevent resources along the way so you can deepen your knowledge on your own.
 
 ## Micro-what?
 
