@@ -352,7 +352,7 @@ Clusters cost money! So you'll want to shut yours down when you are done with it
 
 Well done for getting this far! Seriously, you've learned a lot. In this part of the series we set up K8s clusters on Google's cloud; and we covered some basic K8s object configuration skills including scaling and upgrading pods on the fly. That's a lot of ground to cover! Give yourself a pat on the back.
 
-That said, the examples in this article are of a hello-world variety. There is a lot more worth learning. From architecting and testing; to versioning and monitoring of live applications. If you want more of a deep dive into those kinds of topics, I highly recommend [this book](https://www.amazon.com/gp/product/1492034029/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1492034029&linkCode=as2&tag=sheena0d-20&linkId=5574de8e1ec2bdcab78e56b31e09910f). I've personally found it quite useful.
+That said, the examples in this article are of a hello-world variety. There is a lot more worth learning. From architecting and testing; to versioning and monitoring of live applications. If you want more of a deep dive into those kinds of topics, I highly recommend [this book](https://www.amazon.com/gp/product/1491950358/ref=as_li_tl?ie=UTF8&tag=sheena0d-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1491950358&linkId=af50b90636d80798e5e85c43a83d7b5f). I've personally found it quite useful.
 
 The [final post](http://todo) on this series will cover setting up a basic CI/CD pipeline for our application, as well as the all important cleanup.
 
