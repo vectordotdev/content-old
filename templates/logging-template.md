@@ -6,6 +6,36 @@ What to keep in mind?
 3. If you can easily find all the information elsewhere on the internet, our article will never rank (and there’s no point in writing it).
 4. Remember to use pictures, it makes the article easier to read for skimmers and more approachable. LucidChart or searching Google for pictures "Labeled for Reuse" are both good options.
 
+## SEO Tips
+
+#### Title
+
+* Keep the title under 60 characters long
+
+Need help picking your title?
+1. Google what you think would be a good title.
+2. Take the first 3 links and plug them into the [ahrefs site explorer](https://ahrefs.com/site-explorer).
+3. Go to the organic search tab and look @ the "Top 5 Organic Keywords".
+4. Base your title off something like this.
+
+#### Meta Description
+
+This is your 'Preview' in Contentful
+
+* Keep this under 300 characters so Google doesn't shorten it
+* Readers will use this as a proxy for if they should click on your article
+* The more appealing this makes your article look, the higher you will rank
+
+Need help picking your meta description?
+* If ads show up when you Google, look at what they're doing. They're likely spending a lot of money AB testing meta descriptions.
+* Make sure to look at what the content rises to the top of your search term. It's there for a reason.
+
+#### Content
+
+Below this, there is already a great guide you can follow to serve as an outline for your content.
+
+Remember that Google's job is to show users the best answer to the search query. Without any SEO work, this definitely won't happen ... but it's a prerequisite of doing SEO work.
+
 # Attention-Grabbing Title: The Ultimate Guide to Logging in {Language}
 #### i.e. The Pythonic Guide to logging
 
@@ -31,7 +61,7 @@ What are the drawbacks of the lazy approach? Such as:
 
 Is there a logging module included with the language?
 * What are its big features?
-* What does it do that the lazy-approach couldn't
+* What does it do that the lazy-approach couldn't?
 
 **Real World (basic) Example**
 
