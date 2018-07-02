@@ -2,59 +2,59 @@
 
 ## Introduction
 
-Hi and welcome back. This is the second part of a three part series. In [part 1](http://todo) we got acquainted with Docker by building an image for a simple web app, and then running that image. We have thus far been working with [this repo](https://gitlab.com/sheena.oconnell/tutorial-timber-deploying-microservices.git).
+This is the second part of a three part series. In [part 1](http://todo) we got acquainted with Docker by building an image for a simple web app and then running that image. We have thus far been working with [this repo](https://gitlab.com/sheena.oconnell/tutorial-timber-deploying-microservices.git).
 
-In this part we'll be taking the docker image from part 1 and getting it to run on a Kurbenetes cluster that we set up on Google cloud.
+Here, we'll be taking the docker image from part 1 and getting it to run on a Kurbenetes cluster that we set up on Google cloud.
 
 In [Part 3](http://todo) we'll use Drone.io to set up a simple CI/CD pipeline. It will test our application and roll out any changes we make to the master branch of our repo.
 
 ## So what is Kubernetes (K8s) for?
 
-Ok, so what is this container orchestration thing about? Let's revisit Webflix for this one. Let's say Webflix has gone down the microservices path (for their organization it is a pretty good course of action) and they have isolated a few aspect of their larger application into individual services. Each of those services are then built as images and need to be deployed in the form of live containers.
+Ok, so what is container orchestration? Let's revisit Webflix for this. Let's say Webflix has implemented microservice (for their organization it is a pretty good course of action) and they have isolated a few aspects of their larger application into individual services. Each of those services are built as images and need to be deployed in the form of live containers.
 
 ![Webflix Services](../images/hello_micro_deploy/deploy-micro-orchestrated-services.png)
 
-The diagram here shows just a small portion of the Webflix application. Let's assume it's peak watching time, the little numbers next to the various services are examples of the number of live containers in play. In theory you would be able to make this happen through use of the `docker run` command.
+The diagram here shows just a small portion of the Webflix application. Let's assume it's peak watching time, the little numbers next to the various services are examples of the number of live containers in play. In theory, you would be able to make this happen through the use of the `docker run` command.
 
-Now let's say one of the recommend_service containers hits an unrecoverable error and falls over. If we were managing this through `docker run` then we would need to notice this and then restart the offending container. Or suddenly we are no longer in peak time and the numbers of containers needs to be scaled down. Or you want to deploy a new version of the recommend_service image? Then there are other concerns like container startup time and aliveness probes. And what if you have a bunch of machines that you want to run your containers on, you would need to keep track of what resources are available on each machine, and what replicas are running on each machine so you can scale up and scale down when you need to.
+Now let's say one of the recommend_service containers hits an unrecoverable error and falls over. If we were managing this through `docker run` then we would need to notice this and then restart the offending container. Or suddenly we are no longer in peak time, and the number of containers needs to be scaled down. Or you want to deploy a new version of the recommend_service image. Then there are other concerns like container startup time and aliveness probes. If you have a bunch of machines that you want to run your containers on, you would need to keep track of the resources available on each machine, so you can scale up / down when you necessary.
 
 That is where container orchestration comes in.
 
-Please note, the author of this post is terribly biased and thinks K8s is the shizzle. So that is what we will cover here. There are alternative platforms that you might want to look into, such as Docker Swarm and Mesos/Marathon.
+Please note: the author of this post is terribly biased and thinks K8s is the shizzle. So that is what we will cover here. There are alternative platforms that you might want to look into, such as Docker Swarm and Mesos/Marathon.
 
 Ok, back to the K8s goodness.
 
-K8s was born and raised and battle hardened at Google. Google used it internally to run huge production workloads, and then they open-sourced it because they are lovely people. So K8s is a freely available, highly scalable, extendable and generally solid platform. Another thing that is really useful is that Google cloud has first class K8s support, so if you have a K8s cluster on Google cloud then there are all sorts of tools available that make managing your application easier.
+K8s was born and raised and battle-hardened at Google. Google used it internally to run huge production workloads, and then they open-sourced it because they are lovely people. So K8s is a freely available, highly scalable, extendable and a generally solid platform. If you have a K8s cluster on Google cloud then there are all sorts of tools available that make managing your application easier.
 
-K8s defines a bunch of concepts, there are entire books written on the subject so what follows is a surface level introduction. Personally I've found [this book](https://www.amazon.com/gp/product/1491935677/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1491935677&linkCode=as2&tag=sheena0d-20&linkId=e5bf88f134212c4beba73c601598d7ff") seriously useful.
+K8s defines a bunch of concepts; there are entire books written on the subject so what follows is a surface level introduction. I've found [this book](https://www.amazon.com/gp/product/1491935677/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1491935677&linkCode=as2&tag=sheena0d-20&linkId=e5bf88f134212c4beba73c601598d7ff") seriously useful.
 
 
-Kubernetes lets you run your workload on a cluster of machines. It installs a daemon (a deamon is just a long running background process) on each of these machine and the daemons manage the Kubernetes objects. K8s job is to try to make the object configuration represent reality. Eg if you state that there should be three instances of the container recommend_service:1.0.1 then K8s will create those containers. If one of the containers dies (even if you manually kill it yourself) then K8s will make the configuration true again by recreating the killed container somewhere on the cluster.
+Kubernetes lets you run your workload on a cluster of machines. It installs a daemon (a daemon is just a long-running background process) on each , and the daemons manage the Kubernetes objects. K8s job is to try to make the object configuration represent reality. E.g. if you state that there should be three instances of the container recommend_service:1.0.1 then K8s will create those containers. If one of the containers dies (even if you manually kill it yourself) then K8s will make the configuration 'true' again by recreating the killed container somewhere on the cluster.
 
-There are a lot of different objects defined within K8s. I'll introduce you to just a few. This will be a very very brief introduction to K8s objects and their capabilities. Again there are [entire books](https://www.amazon.com/gp/product/1491935677/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1491935677&linkCode=as2&tag=sheena0d-20&linkId=e5bf88f134212c4beba73c601598d7ff") written on the subject and if you want to become an expert on the topic I would urge you to do some reading on your own.
+There are a lot of different objects defined within K8s. I'll introduce you to just a few. This will be a very very brief introduction to K8s objects and their capabilities. 
 
-### A *pod* is a group of one of more containers
+### A *pod* is a group of one or more containers
 
-Think about peas in a pod, or a Pod of whales. Containers in a pod are managed as a group - they are deployed, replicated, started and stopped together. We will run our simple service as a single container in a pod. For more information on Pods take a look at the [k8s documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod/). It's really quite good.
+Containers in a pod are managed as a group - they are deployed, replicated, started and stopped together. We will run our simple service as a single container in a pod. For more information on Pods take a look at the [k8s documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod/).
 
-If you deploy a pod to a k8s cluster then all containers in that specific pod will run on the same node in the cluster. Also all the containers in a single pod can address each other as though they are on the same computer (they share ip address and port space).This means that they can address each other via `localhost`. And of course their ports can't overlap.
+If you deploy a pod to a k8s cluster, then all containers in that specific pod will run on the same node in the cluster. All the containers in a single pod can address each other as though they are on the same computer (they share IP address and port space). This means that they can address each other via `localhost`. And of course, their ports can't overlap.
 
 ### A *deployment* is a group of one or more pods
 
-Now say Webflix has a Pod that runs their recommendation service and they hit a spike in traffic. They would need to create a few new Pods to handle the traffic. A common approach is to use a Deployment for this.
+Now say Webflix has a Pod that runs their recommendation service and they hit a spike in traffic. They would need to create a few new pods to handle the traffic. A common approach is to use a Deployment for this.
 
-A Deployment specifies a Pod as well as rules around how that Pod is replicated. Eg it could say that we want 3 replicas of a pod containing recommend_service:1.2.0. It also does clever things like help with rolling out upgrades - if recommend_service:1.3.0 becomes available then you can instruct k8s to take down the recommend_service pods and bring up new pods in a sensible way.
+A Deployment specifies a Pod as well as rules around how that Pod is replicated. It could say that it requires three replicas of a pod containing recommend_service:1.2.0. Then, it cleverly helps roll out upgrades - if recommend_service:1.3.0 becomes available, you can instruct k8s to take down the recommend_service pods and bring up new pods without downtime.
 
-Deployments add a lot of power to Pods. To learn more about them I would like to refer you to the [official documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
+Deployments add a lot of power to Pods. To learn more about them, I would refer you to the [official documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
 
 ### A *service* defines networking rules
 
-Containers in a Pod can talk to each other as though they are on the same host. But you'll often need Pods to talk to other Pods, and you'll also need to expose some of your Pods to the big bad Internet because users outside your cluster will likely need to interact with your applications. This is achieved through Services. Services defines the network interfaces exposed by Pods. Again I would like to refer you to the [official documentation](https://kubernetes.io/docs/concepts/services-networking/service/) if you need more info.
+Containers in a Pod can talk to each other as though they are on the same host. But you'll often need Pods to talk to other Pods, and you'll also need to expose some of your Pods to the big bad Internet because users outside your cluster will likely need to interact with your applications. This is achieved through Services. Services define the network interfaces exposed by Pods. 
 
 
 ## Practical: Deploying our application to Google cloud
 
-Now we know why a tool like K8s is useful... let's start using it. I've chosen to proceed by making use of Google's Kubernetes engine offering. You can use a different service provider if you want to, or even run your own cluster, or simulate a cluster using [minikube](https://kubernetes.io/docs/setup/minikube/). For the most part the tutorial will be exactly the same except for the initial cluster setup and the final cluster cleanup.
+Now we know why a tool like K8s is useful ... let's start using it. I've chosen to proceed by making use of Google's Kubernetes engine offering. You can use a different service provider, run your own cluster, or simulate a cluster using [minikube](https://kubernetes.io/docs/setup/minikube/) if you want. 
 
 ### Set up our cluster
 
@@ -62,16 +62,16 @@ Visit the [Kubernetes engine page ](https://console.cloud.google.com/projectsele
 
 Create or select a project - their user interface is fairly intuitive. You'll need to wait a little while for the K8s API and related services to be activated.
 
-Now visit the [Google Cloud Console](https://console.cloud.google.com). At the top of the page you will see a little terminal button. Click on it to activate the Google cloud shell.
+Now visit the [Google Cloud Console](https://console.cloud.google.com). At the top of the page, you will see a little terminal button. Click on it to activate the Google cloud shell.
 
-If you want to use a terminal on your own computer then you can, it just requires a bit more setup. You would need to install the Google Cloud SDK and the kubectl component and perform some extra configuration that's outside the scope of this text. If you want to go down that route take a look at [this](https://cloud.google.com/sdk/docs/quickstarts). You'll be interacting with your cluster through use of the gcloud command line utility.
+You can use a terminal on your computer; it just requires a bit more setup. You need to install the Google Cloud SDK and the kubectl component and perform some extra configuration that's outside the scope of this text. If you want to go down that route take a look at [this](https://cloud.google.com/sdk/docs/quickstarts). You'll be interacting with your cluster through use of the gcloud command line utility.
 
 Ok, so back to the shell: Run the following command to create your cluster:
 ```[bash]
 gcloud container clusters create hello-timber --num-nodes=3 --zone=europe-west1-d
 ```
 
-This will create a three node cluster called hello-timber. It might take a few minutes. Each node is a compute instance (VM) managed by Google. I've chosen here to put the nodes in west Europe. If you want to see a full list of available zones you can use the command `gcloud compute zones list`. Alternatively you can refer to [this document](https://cloud.google.com/compute/docs/regions-zones/) for a list of available zones.
+This will create a three node cluster called hello-timber. It might take a few minutes. Each node is a compute instance (VM) managed by Google. I've chosen here to put the nodes in west Europe. If you want to see a full list of available zones you can use the command `gcloud compute zones list`. Alternatively, you can refer to [this document](https://cloud.google.com/compute/docs/regions-zones/) for a list of available zones.
 
 Once your cluster has been created successfully you should see something like this:
 
@@ -107,7 +107,7 @@ Achievement unlocked: K8s cluster!
 
 In [part 1](http://todo) we covered creating a docker image. Now we need to make our image available to our cluster. This means we need to put our image into a [container registry](https://cloud.google.com/container-registry/) that Google can access. Google cloud has a container registry built in.
 
-In order to make use of Google's registry you will need to tag your images appropriately. In the commands below you will notice that our image tags include `eu.gcr.io`. This is because we are using a zone in Europe. If you chose to put your cluster in a different zone then just refer to [this document](https://cloud.google.com/container-registry/docs/pushing-and-pulling) and update your build and push commands appropriately.
+To make use of Google's registry, you will need to tag your images appropriately. In the commands below you will notice that our image tags include `eu.gcr.io`. This is because we are using a zone in Europe. If you chose to put your cluster in a different zone then refer to [this document](https://cloud.google.com/container-registry/docs/pushing-and-pulling) and update your build and push commands appropriately.
 
 On the Google cloud shell:
 
@@ -189,14 +189,14 @@ This outputs:
 service "timber-tutorial" exposed
 ```
 
-Now this is a bit more complex. What it does is tell Google that we want a LoadBalancer. Loadbalancers decide which Pods should get incident traffic. So if I have a bunch of replicas of my pod running, and a bunch of clients trying to access my application then Google will use it's infrastructure to spread the traffic over my pods. This is a very simplified explanation. And there are a few more kinds of services you might want to know about if you are actually building a microservices project.
+Now this is a bit more complex. What it does is tell Google that we want a LoadBalancer. Loadbalancers decide which Pods should get incident traffic. So if I have a bunch of replicas of my pod running, and a bunch of clients trying to access my application, then Google will use its infrastructure to spread the traffic over my pods. This is a simplified explanation. And there are a few more kinds of services you might want to know about if you are actually building a microservices project.
 
 Remember this line from our Dockerfile?
 ```[dockerfile]
 CMD ["gunicorn", "-b", "0.0.0.0:8080", "main:__hug_wsgi__"]
 ```
 
-Our container is expecting to communicate with the outside world via port 8080. That's the `--target-port`. The port we want to communicate with is `80`. So we just tell the service that we want to tie those ports together.
+Our container is expecting to communicate with the outside world via port 8080. That's the `--target-port`. The port we want to communicate with is `80`. So we tell the service that we want to tie those ports together.
 
 Let's take a look at how our service is doing
 ```[bash]
@@ -228,11 +228,11 @@ This outputs:
 {"timber": "so delicious"}
 ```
 
-Awesome! so we have our image running as a container in a cluster hosted on Google Kurbenetes engine! I don't know about you but I find this pretty exciting. But we have only just started to scratch the surface of what K8s can do.
+Awesome! So we have our image running as a container in a cluster hosted on Google Kurbenetes engine! I don't know about you, but I find this pretty exciting. But we have only just started to scratch the surface of what K8s can do.
 
 ### Scale Up
 
-Let's say our application has proven to be seriously delicious. And so a lot of traffic is coming our way. Cool! Time to scale up. We need to update our deployment object so that it expects 3 pods.
+Let's say our application has proven to be seriously delicious. And so a lot of traffic is coming our way. Cool! Time to scale up. We need to update our deployment object so that it expects three pods.
 
 ```[bash]
 ## first tell k8s to scale it up
@@ -262,7 +262,7 @@ timber-tutorial-99f796786-r92fv   1/1       Running   0          23m
 timber-tutorial-99f796786-tlnck   1/1       Running   0          54s
 ```
 
-Brilliant! So now when someone accesses our K8s service's external IP address then the traffic will be routed by the LoadBalancer to one of the pods. So we can handle three times the amount of traffic we could before.
+Brilliant! So now when someone accesses our K8s service's external IP address, then the traffic will be routed by the LoadBalancer to one of the pods. So we can handle three times the amount of traffic we could before.
 
 ### Deploy a new version of your application
 
@@ -315,7 +315,7 @@ timber-tutorial-99f796786-r92fv   0/1       Terminating   0         47m
 timber-tutorial-99f796786-r92fv   0/1       Terminating   0         47m
 ```
 
-Eventually new things stop happening. Now `Ctrl+C` and run get pods again:
+Eventually, new things stop happening. Now `Ctrl+C` and run get pods again:
 
 ```[bash]
 kubectl get pods
@@ -330,7 +330,7 @@ timber-tutorial-66c6545dd9-h7vfv   1/1       Running   0          1m
 timber-tutorial-66c6545dd9-s44xm   1/1       Running   0          2m
 ```
 
-So what just happened? We started off with three pods of running `timber-tutorial:v1` now we have three pods running `timber-tutorial:v2`. K8s doesn't just kill all the running pods and create all the new ones all at the same time. It is possible to make that happen but it would mean that the application would be down for a little while. Instead, K8s will start bringing new pods online while terminating old ones and re balancing traffic. That means that anyone accessing your application will be able to keep accessing it while the update is being rolled out. This is of course only part of the story, K8s is capable of performing all sorts of health and readiness checks along the way, and can be configured to roll things out in different ways.
+So what just happened? We started off with three pods of running `timber-tutorial:v1` now we have three pods running `timber-tutorial:v2`. K8s doesn't just kill all the running pods and create all the new ones all at the same time. It is possible to make that happen, but it would mean that the application would be down for a little while. Instead, K8s will start bringing new pods online while terminating old ones and rebalancing traffic. That means that anyone accessing your application will be able to keep accessing it while the update is being rolled out. This is of course only part of the story, K8s is capable of performing all sorts of health and readiness checks along the way, and can be configured to roll things out in different ways.
 
 Let's go back to our local terminal and see what our application is doing how:
 
@@ -350,11 +350,8 @@ Clusters cost money! So you'll want to shut yours down when you are done with it
 
 ## Conclusion
 
-Well done for getting this far! Seriously, you've learned a lot. In this part of the series we set up K8s clusters on Google's cloud; and we covered some basic K8s object configuration skills including scaling and upgrading pods on the fly. That's a lot of ground to cover! Give yourself a pat on the back.
+Well done for getting this far! Seriously, you've learned a lot. In this part of the series we set up K8s clusters on Google's cloud, and we covered some basic K8s object configuration skills including scaling and upgrading pods on the fly. That's a lot of ground to cover! Pat yourself on the back.
 
 That said, the examples in this article are of a hello-world variety. There is a lot more worth learning. From architecting and testing; to versioning and monitoring of live applications. If you want more of a deep dive into those kinds of topics, I highly recommend [this book](https://www.amazon.com/gp/product/1491950358/ref=as_li_tl?ie=UTF8&tag=sheena0d-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1491950358&linkId=af50b90636d80798e5e85c43a83d7b5f). I've personally found it quite useful.
 
-The [final post](http://todo) on this series will cover setting up a basic CI/CD pipeline for our application, as well as the all important cleanup.
-
-
-
+The [final post](http://todo) on this series will cover setting up a basic CI/CD pipeline for our application, as well as the all-important cleanup.
