@@ -1,55 +1,51 @@
 # Hello Microservice Deployment Part 3: CI/CD with Drone.io
 
-Welcome back. This is the third and final part of our series on micro-service deployment.
+Welcome back. This is the third and final part of our series on microservice deployment.
 
-In [part 1](http://todo) we got acquainted with Docker by building an image for a simple web app, and then running that image. We have thus far been working with [this repo](https://gitlab.com/sheena.oconnell/tutorial-timber-deploying-microservices.git).
-In [Part 2](http://todo) we got our application online by deploying it to a Kubernetes cluster that we set up ourselves on Google Cloud. We'll also deal with the basics of scaling and updating our application.
+In [Part 1](http://todo) we got acquainted with Docker by building an image for a simple web app and then running that image. In [Part 2](http://todo) we got our application online by deploying it to a Kubernetes cluster that we set up ourselves on Google Cloud. We'll also deal with the basics of scaling and updating our application. So far, we have been working with [this repo](https://gitlab.com/sheena.oconnell/tutorial-timber-deploying-microservices.git).
 
-In this part we'll get a simple CI/CD pipeline up and running so that our code changes are automatically tested and deployed as soon as we push them.
+Here, we'll get a simple CI/CD pipeline up and running so that our code changes are automatically tested and deployed as soon as we push them.
 
 ## So what's the deal with CI/CD?
 
-Continuous Integration and Continuous Deployment are the next step to go through if you want a production-grade micro-service application. Let's revisit Webflix to make this point clear. Webflix is running a whole lot of services in K8s. Each of these services is associated with some code stored in a repository somewhere. Let's say Webflix wisely chooses to use Git to store their code and they follow a feature branching strategy. Branching strategies are a bit (a lot) out side the scope of this article but basically what this means is that if a developer wants to make a new feature then they code up that feature on a new git branch. Once the developer is confident that their feature is complete then they request that their feature branch gets merged into the master branch.  And once the code is merged to the master branch it should mean that it is ready to be deployed into production.
+Continuous Integration and Continuous Deployment are the next steps to go through if you want a production-grade microservice application. Let's revisit Webflix to make this point clear. Webflix is running a whole lot of services in K8s (Kubernetes). Each of these services is associated with some code stored in a repository somewhere. Let's say Webflix wisely chooses to use Git to store their code, and they follow a feature branching strategy.
 
-If all of this sounds pretty cryptic then I would suggest you take some time to [learn about Git](https://git-scm.com/book/en/v2). Git is mighty. Long live the Git.
-
-Now, the process of deploying code to production is not so straightforward - first we should make sure all the unit tests pass and have good coverage. Then since we are working with microservices there is probably a Docker image to build and push. Once that is done then it would be good to make sure that the Docker image actually works by doing some tests against a live container (maybe a group of live containers). It might also be necessary to measure the performance of the new image by running some tests with a tool like [locust](https://locust.io/). The deployment process can get very complex if there are multiple developers working on multiple services at the same time since we would need to keep track of version compatibility for the various services.
+Now, the process of deploying code to production is not so straightforward - first, we should make sure all the unit tests pass and have good coverage.   It might also be necessary to measure the performance of the new image by running some tests with a tool like [locust](https://locust.io/). The deployment process can get very complex if multiple developers are working services at the same time since we would need to keep track of version compatibility for the various functions.
 
 CI/CD is all about automating this sort of thing.
 
-There are loads of CI/CD tools around and they have their own ways of configuring their pipelines (a pipeline is a series of steps code needs to go through when it is pushed). There are many good books (like [this one](https://www.amazon.com/gp/product/0321601912/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=sheena0d-20&creative=9325&linkCode=as2&creativeASIN=0321601912&linkId=a173d88ee1c6ed8183da5951ee6d5f36)) dedicated to designing deployment pipelines but in general you'll want to do something like this:
+There are loads of CI/CD tools around, and they have their ways of configuring the pipelines (a pipeline is a series of steps code needs to go through when it's pushed). Here's a general outline:
 
 1. unit test the code
 2. build the container
 3. set up a test environment where the new container can run within a realistic context
-4. run some integration tests
-5. maybe run a few more tests eg: saturation tests with locust.io or similar
-6. deploy to the production system
-7. notify team of success/failure
+4. run some tests
+5. deploy to the production system
+6. notify team of success/failure
 
 If, for example, one of the test steps fails, then the code will not get deployed to production. The pipeline will skip to the end of the process and notify the team that the deployment was a failure.
 
-You can also set up pipelines for merge/pull requests, eg if a developer requests a merge then execute the above pipeline but LEAVE OUT STEP 6 (deploying to production).
+You can also set up pipelines for merge/pull requests, e.g. if a developer requests a merge then execute the above pipeline but LEAVES OUT STEP 5 (deploying to production).
 
 ## Drone.io
 
-Drone is a container based Continuous Delivery system. It's open source, highly configurable (every build step is executed by a container!) and has a lot of [plugins](http://plugins.drone.io/) available. It's also one of the easier CI/CD systems to learn.
+Drone is a container based Continuous Delivery system. It's open source, highly configurable (every build step is executed by a container!) and has a lot of [plugins](http://plugins.drone.io/) available. It's also one of the easiest CI/CD systems to learn.
 
 ## Practical: Setting up Drone
 
 In this section, we're going to set up drone on a VM in Google Cloud and get it to play nice with Gitlab. It works fine with Github and other popular Git applications as well, I just like Gitlab.
 
-Now I'll be working on the assumption that you have been following along since part 1 of this series. We already have a K8s cluster set up on Google cloud, and it is running a Deployment containing a really simple web app. Thus far we've been interacting with our cluster via the Google cloud shell, we're going to keep doing that. If any of this stuff bothers you then please take a look at [Part 2](http://todo).
+Now I'll be working on the assumption that you have been following along since part 1 of this series. We already have a K8s cluster set up on Google cloud, and it is running a Deployment containing a straightforward web app. Thus far we've been interacting with our cluster via the Google cloud shell. If you're lost, feel free to take a look at [Part 2](http://todo).
 
 
 ### Setup Infrastructure
 
 The first thing we'll do is set up a VM (Google cloud calls this a compute instance) with a static IP address, and we'll make sure that Google's firewall lets in HTTP traffic.
 
-When working with compute instances we need to continuously be aware of regions and zones. It's not too complex - in general you just want to put your compute instances close to where they will be accessed from. I'll be using `europe-west1-d` as my zone, and `europe-west1` as my region. Feel free to just copy me for this tutorial. Alternatively take a look at [Google's documentation](https://cloud.google.com/compute/docs/regions-zones/) and pick what works best for you.
+When working with compute instances we need to continuously be aware of regions and zones. It's not too complex - in general you just want to put your compute instances close to where they will be accessed from. I'll be using `europe-west1-d` as my zone, and `europe-west1` as my region. Feel free just to copy me for this tutorial. Alternatively, take a look at [Google's documentation](https://cloud.google.com/compute/docs/regions-zones/) and pick what works best for you.
 
 
-First step is to reserve a static ip address. We have named ours `drone-ip`
+The first step is to reserve a static IP address. We have named ours `drone-ip`
 ```[bash]
 gcloud compute addresses create drone-ip --region europe-west1
 ```
@@ -59,7 +55,7 @@ This outputs:
 Created [https://www.googleapis.com/compute/v1/projects/timber-tutorial/regions/europe-west1/addresses/drone-ip].
 ```
 
-Now take a look at it and take note of the actual ip address. We'll need it later:
+Now take a look at it and take note of the actual IP address. We'll need it later:
 ```[bash]
 gcloud compute addresses describe drone-ip --region europe-west1
 ```
@@ -78,7 +74,7 @@ status: RESERVED
 So the ip address that I just reserved is `35.233.66.226`. Yours will be different.
 
 
-Alright, now create a VM
+Now create a VM:
 
 ```[bash]
 gcloud compute instances create drone-vm --zone=europe-west1-d
@@ -91,9 +87,9 @@ NAME      ZONE            MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP  
 drone-vm  europe-west1-d  n1-standard-1               10.132.0.6   35.195.196.332  RUNNING
 ```
 
-Alright, now we have a VM and a static IP. We need to tie them together:
+Now we have a VM and a static IP. We need to tie them together:
 
-First let's look at the existing configuration for our VM:
+First, let's look at the existing configuration for our VM:
 ```[bash]
 gcloud compute instances describe drone-vm --zone=europe-west1-d
 ```
@@ -107,7 +103,7 @@ networkInterfaces:
     natIP: 35.195.196.332
     type: ONE_TO_ONE_NAT
 ```
-A VM can at most have one of accessConfig. We'll need to delete the existing one and replace it with a static ip address config. First we delete it:
+A VM can at most have one of accessConfig. We'll need to delete the existing one and replace it with a static IP address config. First, we delete it:
 
 ```[bash]
 gcloud compute instances delete-access-config drone-vm \
@@ -142,13 +138,11 @@ This outputs:
 Updated [https://www.googleapis.com/compute/v1/projects/timber-tutorial/zones/europe-west1-d/instances/drone-vm].
 ```
 
-If you wanted to allow HTTPS traffic there is a tag for that too, but setting up HTTPS is a bit outside the scope of this article.
-
-Awesome! now we have a VM with a static ip address and it can talk to the outside world via HTTP.
+Awesome! Now we have a VM with a static IP address, and it can talk to the outside world via HTTP.
 
 ### Install Prerequisites
 
-In order to get Drone to run, we need to install Docker and Docker-Compose. Let's do that now:
+To get Drone to run, we need to install Docker and Docker-Compose. Let's do that now:
 
 SSH into our VM. From your Google cloud shell like so:
 
@@ -158,7 +152,7 @@ export PROJECT_ID="$(gcloud config get-value project -q)"
 gcloud compute --project ${PROJECT_ID} ssh --zone "europe-west1-d" "drone-vm"
 ```
 
-When it asks for passphrases you can leave them blank for the purpose of this tutorial. That said, it's not really good practice.
+When it asks for passphrases, you can leave them blank for this tutorial. That said, it's not good practice.
 
 Ok, now you have a shell into your new VM. Brilliant.
 
@@ -176,7 +170,7 @@ Next up we [install Docker](https://docs.Docker.com/install/linux/Docker-ce/debi
 
 ### Generate Gitlab oAuth credentials
 
-In gitlab, go to your user settings and click on applications. You want to create a new application. Enter `drone` as the name. As a callback url use `http://35.233.66.226/authorize`. The ip address there is the static ip address we just generated.
+In GitLab, go to your user settings and click on applications. You want to create a new application. Enter `drone` as the name. As a callback URL use `http://35.233.66.226/authorize`. The IP address there is the static IP address we just generated.
 
 Gitlab will now output an application id and secret and some other stuff. Take note of these values, drone is going to need them.
 
@@ -186,9 +180,7 @@ You'll also need to create a git repo that you own. Thus far we've been using `h
 
 ### Configure Drone
 
-You can refer to the [drone documentation](http://docs.drone.io/installation/) for full instructions .
-
-First we'll need to set up some environmental variables. Let's make a new file called `.drone_secrets.sh`
+First, we'll need to set up some environmental variables. Let's make a new file called `.drone_secrets.sh`
 
 ```[bash]
 nano .drone_secrets.sh
@@ -206,7 +198,7 @@ export DRONE_GITLAB_CLIENT=<client>
 export DRONE_GITLAB_SECRET=<secret>
 ```
 
-You'll need to update is a little bit:
+You'll need to update it a little bit:
 
 `DRONE_HOST`: this should contain your static ip address.
 `DRONE_SECRET`: any random string will work. Just make something up or use a random password generator like [this one](https://www.random.org/passwords/?num=1&len=16&format=html&rnd=new)
@@ -267,7 +259,7 @@ services:
       - DRONE_SECRET=${DRONE_SECRET}
 ```
 
-Now this compose file requires a few environmental settings to be available. Luckily we've already set those up. Save and exit just like before.
+Now, this file requires a few environmental settings to be available. Luckily we've already set those up. Save and exit just like before.
 
 Now run
 
@@ -275,9 +267,11 @@ Now run
 docker-compose up
 ```
 
-There will be a whole lot of output. Open a new browser window and navigate to your drone host. In my case that is: `http://35.233.66.226`. You will be redirected to an oAuth authorization page on Gitlab. Choose to authorize access to your account. You will then be redirected back to your drone instance, and after a little while you will see a list of your repos.
+There will be a whole lot of output. Open a new browser window and navigate to your drone host. In my case, that is: `http://35.233.66.226`. You will be redirected to an OAuth authorization page on Gitlab. Choose to authorize access to your account. You will then be redirected back to your drone instance, and after a little while, you will see a list of your repos.
 
-Each repo will have a toggle button on the right of the page. Toggle whichever one(s) you want to set up CI/CD for. If you have been following along then there should be a repo called `${YOUR_GITLAB_USER}/tutorial-timber-deploying-microservices`. Go ahead and activate that one.
+Each repo will have a toggle button on the right of the page. Toggle whichever one(s) you want to set up CI/CD. If you have been following along, then there should be a repo called `${YOUR_GITLAB_USER}/tutorial-timber-deploying-microservices`. Go ahead and activate that one.
+
+You can refer to the [drone documentation](http://docs.drone.io/installation/) for further instructions.
 
 ### Recap
 
@@ -287,7 +281,7 @@ Alright! So far so good. We've got Drone.ci all set up and talking to Gitlab.
 
 Before we get into the meat of actually running a pipeline with drone, we'll need a way for drone to authenticate with our Google project. Before we were just interacting as ourselves via the `gcloud` tooling built into the Google cloud shell (or installed locally if you wanted to do things that way). We want drone to have a subset of our user rights.
 
-We start off by creating a service account. This is sortof like a user. Like users, service accounts have credentials and rights and they can authenticate with Google cloud. To learn all about service accounts you can refer to [Google's official docs](https://cloud.google.com/iam/docs/creating-managing-service-accounts).
+We start off by creating a service account. This is similar to a user. Like users, service accounts have credentials and rights, and they can authenticate with Google cloud. To learn all about service accounts, you can refer to [Google's official docs](https://cloud.google.com/iam/docs/creating-managing-service-accounts).
 
 Open up another Google cloud shell and do the following:
 
@@ -385,10 +379,10 @@ Copy it and paste it into the `secret value` field and click on `save`
 
 Now Drone has access to our Google Cloud resources (although we still need to tell it how to access the key file), and it knows about our repo. Now we need to tell drone what exactly we need done when we push code to our project.  We do this by specifying a pipeline in a file named `.drone.yml` in the root of our git repo. `.drone.yml` is written in YAML format. [Here](https://lzone.de/cheat-sheet/YAML) is a cheat-sheet that I've found quite useful.
 
-It's time to put something in your tutorial-timber-deploying-microservices repo. We'll just copy over everything from the repo created for this series of articles. In a terminal somewhere (your local computer, google cloud shell, or wherever):
+It's time to put something in your tutorial-timber-deploying-microservices repo. We'll copy over everything from the repo created for this series of articles. In a terminal somewhere (your local computer, google cloud shell, or wherever):
 
 ```[bash]
-# clone the repo if you havent already and cd in
+# clone the repo if you haven't already and cd in
 git clone https://gitlab.com/sheena.oconnell/tutorial-timber-deploying-microservices.git
 cd tutorial-timber-deploying-microservices
 
@@ -442,7 +436,7 @@ pipeline:
 
 ```
 
-As pipelines go, it's quite a small one. We have specified three steps: `unit-test`, `gcr` and `deploy`. It helps to keep Docker-compose in mind when working with drone. Each step is run as a Docker container. So each step is based on a Docker image. And for the most part you get to specify exactly what happens on those containers through use of `commands`.
+As pipelines go, it's quite a small one. We have specified three steps: `unit-test`, `gcr` and `deploy`. It helps to keep Docker-compose in mind when working with drone. Each step is run as a Docker container. So each step is based on a Docker image. And for the most part, you get to specify what happens on those containers through use of `commands`.
 
 Let's start from the top.
 ```[yaml]
@@ -453,7 +447,7 @@ Let's start from the top.
       - python -m pytest
 ```
 
-This step is fairly straight forward. Whenever any changes are made to the repo (on any branch) then the unit tests are run. If the tests pass then drone will proceed to the next step. In our case all the rest of the steps only happen on the master branch, so if you are in a feature branch then the only thing this pipeline will do is run unit tests.
+This step is relatively straightforward. Whenever any changes are made to the repo (on any branch) then the unit tests are run. If the tests pass then drone will proceed to the next step. In our case, all the rest of the steps only happen on the master branch, so if you are in a feature branch, the only thing this pipeline will do is run unit tests.
 
 ```[yaml]
   gcr:
@@ -466,11 +460,11 @@ This step is fairly straight forward. Whenever any changes are made to the repo 
       branch: master
 ```
 
-The `gcr` step is all about building our application Docker image and pushing it into the Google Cloud Registry (GCR). It is a special kind of step as it is based on a plugin. We wont go into detail on how plugins work here. Just think of it as an image that takes in special parameters. This one is configured to push images to `eu.gcr.io/timber-tutorial/timber-tutorial`.
+The `gcr` step is all about building our application Docker image and pushing it into the Google Cloud Registry (GCR). It is a special kind of step as it is based on a plugin. We won't go into detail on how plugins work here. Just think of it as an image that takes in special parameters. This one is configured to push images to `eu.gcr.io/timber-tutorial/timber-tutorial`.
 
 The `tags` argument contains a list of tags to be applied. Here we make use of some variables supplied by Drone. `DRONE_COMMIT` is the git commit hash. And each build of each repo is numbered, so we use that as a tag too. Drone supplies a whole lot of variables, take a look [here](http://readme.drone.io/0.5/usage/environment-reference/) for a nice list.
 
-The next thing is `secrets`. Remember that secret we copy-pasted into drone just a few minutes ago? It's name was `GOOGLE_CREDENTIALS`. This line makes sure that the contents of that secret are available to the step's container in the form of an environmental variable named `GOOGLE_CREDENTIALS`.
+The next thing is `secrets`. Remember that secret we copy-pasted into drone just a few minutes ago? Its name was `GOOGLE_CREDENTIALS`. This line makes sure that the contents of that secret are available to the step's container in the form of an environmental variable named `GOOGLE_CREDENTIALS`.
 
 The last step is a little more complex:
 
@@ -505,9 +499,9 @@ Now we have a bunch of commands. These execute in order and you should recognize
 - gcloud auth activate-service-account --key-file key.json
 ```
 
-But unfortunately Drone completely mangles the whitespace of our secret. Thus `generate_key.py` exists to de-mangle the key so it is actually useful (gee, thanks Drone!). And of course Python needs to be available so we can run that script. Thus `yes | apt-get install python3`.
+Unfortunately, Drone completely mangles the whitespace of our secret. Thus `generate_key.py` exists to de-mangle the key, so it is useful (gee, thanks Drone!). Of course, Python needs to be available so we can run that script. Thus `yes | apt-get install python3`.
 
-Now that everything is set up, if you make a change to your code and push it to master then you will be able to watch the pipeline get executed by keeping an eye on the drone front-end.
+Now that everything is set up, if you make a change to your code and push it to master, then you will be able to watch the pipeline get executed by keeping an eye on the drone front-end.
 
 Once the pipeline is complete you will be able to make sure that your deployment is updated by taking a look at the Pods on the gcloud command line:
 
@@ -541,13 +535,13 @@ Now if you were to check your git log, the last commit to master that you pushed
 
 ## Conclusion
 
-Wow, we made it! If you've worked through all the practical examples then you've accomplished a lot.
+Wow, we made it! If you've worked through all the practical examples, then you've accomplished a lot.
 
 You are now acquainted with Docker - you built an image and instantiated a container for that image. Then you got your images running on a Kubernetes cluster that you set up yourself. You then manually scaled and rolled out updates to your application.
 
 And then in this part you got a simple CI/CD pipeline up and running from scratch by provisioning a VM, installing Drone and it's prerequisites, and getting it to play nice with Gitlab and Google Kurbenetes Engine.
 
-On the other hand, if you worked through all the practical examples then this is just the beginning. I sincerely hope that this article has been useful to you on your journey toward microservice mastery.
+On the other hand, if you worked through all the practical examples, then this is just the beginning. I sincerely hope that this article has been useful to you on your journey toward microservice mastery.
 
 Cheers,
 Sheena
@@ -569,8 +563,3 @@ gcloud container clusters delete hello-timber
 yes | gcloud compute instances delete drone-vm --zone=europe-west1-d
 yes | gcloud compute addresses delete drone-ip --region=europe-west1
 ```
-
-
-
-
-
