@@ -5,8 +5,6 @@ This article is the first of a three part series all about deploying microservic
 In [Part 2](http://todo) we'll get our application online by deploying it to a Kubernetes cluster that we set up ourselves on Google Cloud. We'll also deal with the basics of scaling and updating our application.
 In [Part 3](http://todo) we'll use Drone.io to set up a simple CI/CD pipeline. It will test our application and roll out any changes we make to the master branch of our repo.
 
-This series is very much the 'hello world' of microservices. We will not cover every aspect of designing, deploying, testing and monitoring your services (there are [entire books](https://www.amazon.com/gp/product/1491950358/ref=as_li_tl?ie=UTF8&tag=sheena0d-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1491950358&linkId=af50b90636d80798e5e85c43a83d7b5f) written on that topic), but it will give you a pretty good idea of how to get started. I'll also point you to relevent resources along the way so you can deepen your knowledge on your own.
-
 ## Micro-what?
 
 If you are familiar with the concepts of microservices then feel free to skip this section.
@@ -15,7 +13,7 @@ In the beginning there were monoliths. Imagine you have an application running o
 
 Let's say we write the entire Webflix application as a single application - a monolith. There is quite a lot going on in there, which means quite a lot of testing would need to happen every time any changes are made. Eg: if I make a change to the code responsible for recommendation then I should run the entire unit test suite - after all there might be some coupling between the recommendation code and some other part of the system. Now once my tests pass I can deploy the code but that is quite a pain as well because there sure is a lot of it. I would need to rebuild absolutely everything and deploy a big thing, or introduce some complexity by introducing a kind of packaging system for different code units. Rolling back is similarly inefficient or complex.
 
-And once our application is live then there are further inefficiencies. Let's say we have a few people signed up and paid up and they are binge watching their respective guilty pleasures one fine Saturday afternoon. With an application like Webflix, one would expect there to be more people watching videos at certain times and on certain days so it would make sense to build in the capability to scale up and down. But when we scale up then we scale up everything since it is a monolith. Wouldn't it be nice to just scale up those parts of the system that are actually under pressure during peak times? For example the subsystem responsible for actually serving videos should be scaled, but the forgot-password functionality shouldn't.
+Wouldn't it be nice to be able to scale up (or down) Webflix to demand? For example at peak watching time you would want to scale up the subsystem responsible for serving videos but you might not want to scale up anything else. In a monolith architecture, scaling is all or nothing.
 
 Enter Microservices.
 
@@ -194,7 +192,7 @@ docker build -t timber-tutorial:2 .
 
 Well done :) You've managed to build and tag a docker image and run it as a container.
 
-There is quite a lot more to be said about Docker that is outside the scope of this text. I suggest you take a look at the [official documentation](https://docs.docker.com/) if you need more details. Or if you need something more structured then there are a lot of [truly excellent books](https://www.amazon.com/gp/product/1521822808/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1521822808&linkCode=as2&tag=sheena0d-20&linkId=b8572b1cb6f525a7e11977cdfaf953ba) out there that can help you along.
+There is quite a lot more to be said about Docker that is outside the scope of this text. I suggest you take a look at the [official documentation](https://docs.docker.com/) if you need more details. Or if you need something more structured then there are a lot of truly excellent books like [this one](https://www.amazon.com/gp/product/1521822808/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1521822808&linkCode=as2&tag=sheena0d-20&linkId=b8572b1cb6f525a7e11977cdfaf953ba) and [this one](https://www.amazon.com/gp/product/1491950358/ref=as_li_tl?ie=UTF8&tag=sheena0d-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1491950358&linkId=af50b90636d80798e5e85c43a83d7b5f).
 
 Are you ready for the next step? In [part 2](http://todo) we'll be deploying, scaling and updating our little application on the cloud!
 
