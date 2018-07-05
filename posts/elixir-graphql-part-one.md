@@ -1,4 +1,5 @@
 # A Gentle Introduction to Using GraphQL with Elixir and Phoenix
+
 ## Part 1: Getting a working GraphQL application!
 
 Last Updated: _June 18, 2018_
@@ -18,9 +19,9 @@ This tutorial was built on a Mac OS X 10.11.6 system.
 
 ### Assumptions
 
-1. You understand a minimum of Elixir syntax and concepts
-2. You already have a development database ready to go
-3. You have all of the pre-requisite software installed. Pre-reqs are:
+1.  You understand a minimum of Elixir syntax and concepts
+2.  You already have a development database ready to go
+3.  You have all of the pre-requisite software installed. Pre-reqs are:
     - Postgresql with an appropriate development username/password ([Installation Guide](https://wiki.postgresql.org/wiki/Detailed_installation_guides))
     - Elixir ([Installation Guide](https://elixir-lang.org/install.html))
     - Phoenix ([Installation Guide](https://hexdocs.pm/phoenix/installation.html#content))
@@ -31,13 +32,13 @@ This tutorial was built on a Mac OS X 10.11.6 system.
 Throughout this guide, you'll see a lot of useful stuff, whether it's descriptions, code, or shell commands! Any time you see some code like this:
 
     $ do the thing
-    
+
 These blocks represents shell commands being run (specifically, anything with a `$` in front of it). Any additional lines will be output from the command run. Sometimes `...` will be used to indicate long blocks of text cut out in interest of brevity.
 
 IEx (Elixir's Interactive REPL) has commands will be represented like this:
 
     iex(1)> "do the thing"
-    
+
 And any additional lines will be output from that operation. Don't worry about the number inside of the parantheses. These just indicate what command number your IEx shell is currently on and these may not match up.
 
 Code will be represented in code blocks, like this:
@@ -53,13 +54,13 @@ The best way to get the most out of this tutorial is to follow along as you buil
 
 ## Moving on to the application
 
-We'll start off by actually talking about what problem this project is designed to solve! It's always good to think about what you're building before you start thinking about what you're building with; it prevents some chicken-and-egg scenarios where you have a great technology that you're using and the project you're trying to build with it is totally incompatible!
+We'll start off by actually talking about what problem this project is designed to solve. It's always good to think about what you're building before you start thinking about what you're building with; it prevents some chicken-and-egg scenarios where you have a great technology that you're using and the project you're trying to build with it is totally incompatible.
 
-The project we're building is going to be an application that will store/retrieve Event Logs. You could use this for something like tracking requests you're making, or tracking audit events in a log, or...well, anything that would require storing some arbitrary events with types, messages, and payloads! We'll start off by actually creating our project and getting everything set up before we start talking more about the design!
+The project we're building is going to be an application that will store/retrieve Event Logs. You could use this for something like tracking requests you're making, or tracking audit events in a log, or...well, anything that would require storing some arbitrary events with types, messages, and payloads. We'll start off by actually creating our project and getting everything set up before we start talking more about the design.
 
-Next, our tech choice! Elixir and Phoenix are absolutely fantastic for building extremely high performance, low maintenance systems, and GraphQL's ability to fetch huge sets of data in varied ways makes Elixir a particularly great symbiotic fit!
+Next, our tech choice: Elixir and Phoenix are absolutely fantastic for building extremely high performance, low maintenance systems, and GraphQL's ability to fetch huge sets of data in varied ways makes Elixir a particularly great symbiotic fit!
 
-Our project will be called "Greenfy" short for "Green Faerie" (yes, a silly Absinthe reference), but slightly more startup-sounding!
+Our project will be called "Greenfy" short for "Green Faerie" (yes, a silly Absinthe reference), but slightly more startup-sounding.
 
 ### Creating a new project
 
@@ -83,7 +84,7 @@ This is what happened:
     You can also run your app inside IEx (Interactive Elixir) as:
 
     $ iex -S mix phx.server
-    
+
 Run our tests, verify green.
 
 ### Setting up our app
@@ -93,7 +94,7 @@ Next, we'll want to follow the instructions given to us by Phoenix upon creating
     $ cd greenfy
     $ mix ecto.create
     The database for Greenfy.Repo has been created
-    
+
 You should already have your database set up with a user account that can create and modify databases as necessary, so when you run the `mix ecto.create` command, Ecto will helpfully create the development database for us to run our migrations on later!
 
 ### Adding in Absinthe
@@ -104,7 +105,7 @@ Open up `mix.exs` and add the following line to the `defp deps do` function bloc
 
     {:absinthe, "~> 1.4"},
     {:absinthe_plug, "~> 1.4"}
-    
+
 Make sure you add a comma at the end of what was previously the last line in that list of tuples or you'll get a syntax error! At the top, in the block for the `application` function, you'll want to add in support for Absinthe Plug via adding one more atom into the extra_applications list, `:absinthe_plug`. The resulting function body should look like this:
 
 ```
@@ -121,9 +122,9 @@ Then run:
     $ mix do deps.get, compile
     ...
     Generated greenfy app
-    
+
 You may be wondering why we're adding both `absinthe` and `absinthe_plug`. The reason for this is that first of all, the `absinthe` dependency handles _most_ of the scenarios we need handled for a smooth integration between GraphQL and Elixir,
-    
+
 ### Creating our first GraphQL query
 
 So, you're probably coming into this tutorial already having an inkling of what GraphQL is and what it does and what it provides for both the developer and the end-user. A pitfall I've run into repeatedly over the course of my career is that most REST APIs over time become less RESTful. There are more and more exceptions you need to build into your application, and some of your endpoints become too bloated and they're difficult to modify out or...
@@ -132,8 +133,8 @@ Well, lots of things happen. Especially if you have a mobile or client applicati
 
 GraphQL recognizes two things:
 
-1. The shape of your data will change
-2. The shape of your data needs to be different for each client
+1.  The shape of your data will change
+2.  The shape of your data needs to be different for each client
 
 Based on that, GraphQL implements more of a client-focused method of getting data out of a system. The client will tell the server what data it needs, and more importantly, HOW it needs that data to be shaped! This allows you to iterate a little faster, to build better filters and functionality, and easily add support for more data in your system without having to build/version a whole brand new endpoint that you will also need to support over time.
 
@@ -141,7 +142,7 @@ Another awesome feature is that GraphQL supports querying for schema information
 
 GraphQL is not perfect, by any means. It's pretty complicated and you'll likely run into a lot of people with lots of REST experience not understanding why a particular piece of a GraphQL query works the way it does. You'll need to train your users to be able to use this new API effectively, but the end result is allowing the client to get whatever they want, however they want it!
 
-With that past us, let's move on to talk more about the actual implementation!
+With that past us, let's move on to talk more about the actual implementation.
 
 #### Designing the shape of our data
 
@@ -155,10 +156,10 @@ Our application is a simple event logging platform, so we're just going to have 
     payload
     inserted_at
     updated_at
-    
+
 `id`, `inserted_at`, and `updated_at` will all be included as default columns for any Ecto tables we create, so we don't need to worry about how we're going to define those.
 
-For the `event_type`, `payload`, and `message` columns, we're going to use those to track what types of events (unsurprisingly) each event is and message will store a condensed version of the payload. Separately, we have another column called `payload`, whose responsibility is to store the full payload when necessary. This allows the `message` column to stay smaller and easier to search!
+For the `event_type`, `payload`, and `message` columns, we're going to use those to track what types of events (unsurprisingly) each event is and message will store a condensed version of the payload. Separately, we have another column called `payload`, whose responsibility is to store the full payload when necessary. This allows the `message` column to stay smaller and easier to search.
 
 #### Getting our database tables running in Ecto
 
@@ -225,17 +226,17 @@ You'll probably notice that `:inserted_at` and `:updated_at` are not being inclu
 
 #### Sidebar: GraphQL Definitions
 
-We're using A LOT of terms here pretty liberally when talking about GraphQL but not doing a lot to explain what they actually are! Let's spend a really quick sidebar talking about some of the terms we've discussed so far (and the ones we'll be doing later).
+We're using A LOT of terms here pretty liberally when talking about GraphQL but not doing a lot to explain what they actually are, so let's take a really quick sidebar talking about some of the terms we've discussed so far (and the ones we'll be doing later).
 
-First off, we have **Types**. Types are exactly what they sound like: definitions of the various data types we'll be defining for our GraphQL application. A good example of this is the object definition above: An **event** is a GraphQL **object** type, with four **fields** defined on it so far (we'll get to fields next)!
+First off, we have **Types**. Types are exactly what they sound like: definitions of the various data types we'll be defining for our GraphQL application. A good example of this is the object definition above: An **event** is a GraphQL **object** type, with four **fields** defined on it so far (we'll get to fields next).
 
-A **Field** is essentially a bit of queryable information. An object, like the data type we defined previously, stores a collection of different fields together. Each field should define, at a minimum, its name (or key) and its type!
+A **Field** is essentially a bit of queryable information. An object, like the data type we defined previously, stores a collection of different fields together. Each field should define, at a minimum, its name (or key) and its type.
 
-Next, we'll be working with **Schemas**. If **Types** define what data is queryable in our GraphQL API and the shape of that data, the **Schema** defines how we actually get that data OUT of our GraphQL API!
+Next, we'll be working with **Schemas**. If **Types** define what data is queryable in our GraphQL API and the shape of that data, the **Schema** defines how we actually get that data OUT of our GraphQL API.
 
 Later on, you'll see something called **Resolvers**. If the **Schema** tells the client how to query the data out of our application, the **Resolver** tells the server how to react to that query and how to interpret those GraphQL queries.
 
-Finally, this will be something we'll use much later, but you'll hear it mentioned before that point: **Mutations**! Mutations are how the data in our GraphQL application is modified! Instead of your `POST`, `PUT`, and `PATCH` endpoints in your REST API, you just define **Mutations** instead!
+Finally, this will be something we'll use much later, but you'll hear it mentioned before that point: **Mutations**! Mutations are how the data in our GraphQL application is modified! Instead of your `POST`, `PUT`, and `PATCH` endpoints in your REST API, you just define **Mutations** instead.
 
 #### Back to our implementation
 
@@ -258,11 +259,11 @@ defmodule Greenfy.Schema do
 end
 ```
 
-We use the provided `Absinthe.Schema` macro to build out our Schema body. Next, we define our query body, which starts off with a `@desc` statement, which sets a module variable called `desc` (unsurprisingly) which describes the general use for this query. Think of it as a bit of documentation for the client!
+We use the provided `Absinthe.Schema` macro to build out our Schema body. Next, we define our query body, which starts off with a `@desc` statement, which sets a module variable called `desc` (unsurprisingly) which describes the general use for this query. Think of it as a bit of documentation for the client.
 
-Next, in our query, we have a field. Again, our field is queryable data, so we say that our "query" has a key in it called `events`. We're also telling Absinthe that we should expect `events` to return a **list of events**, so we use the function `list_of(:event)` (note the singular version of `event` and that it is an atom, here). This tells Absinthe that when someone queries `events`, we should be fetching a list of the Data Type `Event` that we defined in our Data Types file earlier!
+Next, in our query, we have a field. Again, our field is queryable data, so we say that our "query" has a key in it called `events`. We're also telling Absinthe that we should expect `events` to return a **list of events**, so we use the function `list_of(:event)` (note the singular version of `event` and that it is an atom, here). This tells Absinthe that when someone queries `events`, we should be fetching a list of the Data Type `Event` that we defined in our Data Types file earlier.
 
-Finally, we have a **Resolver**, which tells Absinthe that when a client queries for a list of events, this function's return statement is what data should be passed back to the client (after some transformation, of course). A `resolve`statement takes in three arguments; the `parent`, the `args` (the arguments to our query, so whatever we might be looking for or filtering on), and the `resolution`, which tells us what to do when we've fetched all of the data and what to do with that data at the end! We'll build on this later by moving our resolvers off into their own code, but for right now we're going to stick with a simple implementation!
+Finally, we have a **Resolver**, which tells Absinthe that when a client queries for a list of events, this function's return statement is what data should be passed back to the client (after some transformation, of course). A `resolve`statement takes in three arguments; the `parent`, the `args` (the arguments to our query, so whatever we might be looking for or filtering on), and the `resolution`, which tells us what to do when we've fetched all of the data and what to do with that data at the end! We'll build on this later by moving our resolvers off into their own code, but for right now we're going to stick with a simple implementation.
 
 #### One final step before we can start testing
 
@@ -304,8 +305,8 @@ You can see in this screenshot that we have our initial query running, selecting
 
 So now we're at a point where we have a base GraphQL API and support for VERY limited operations to get the data out! We understand a bit more about GraphQL, the terminology used, and how it all fits together, so where do we go from here?
 
-Easy! Let's make this application more robust! For one thing, we can't verify this works super well unless we can also get data into it! In addition, testing is already hard, so how on earth are we going to test something so completely malleable?
+Easy: we'll make this application more robust! For one thing, we can't verify this works super well unless we can also get data into it. In addition, testing is already hard, so how on earth are we going to test something so completely malleable?
 
-Stay tuned! We have a lot more to talk about, a lot more to understand, and hopefully we can eventually land at being experts at implementing GraphQL APIs in Elixir!
+Stay tuned! We have a lot more to talk about, a lot more to understand, and hopefully we can eventually land at being experts at implementing GraphQL APIs in Elixir.
 
-Following along? You can check your work against the tutorial repo at [Github](https://github.com/richeyb/greenfy-example). Tag/Release v0.1.0 is the complete version for this phase of the tutorial!
+Following along? You can check your work against the tutorial repo at [Github](https://github.com/richeyb/greenfy-example). Tag/Release v0.1.0 is the complete version for this phase of the tutorial.
