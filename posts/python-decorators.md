@@ -3,16 +3,11 @@ title: Debugging Python code using Decorators
 author: nhumrich
 ---
 
-Debugging your Python code without changing it, using Decorators
+Python decorators are a powerful concept that allow you to "wrap" a function with another function.
 
+The idea of a decorator is to abstract away something that you want a function or class to do, besides its normal responsibility. This can be helpful for many reasons such as code reuse, and sticking to [curlys law](https://blog.codinghorror.com/curlys-law-do-one-thing/). 
 
-
-Python decorators are a very powerful concept in python that allow you to "wrap" a function with another function. 
-The main concept of a decorator is to abstract away something that you want to function or class to also do, besides its normal responsibility. 
-This can be helpful for many reasons such as code reuse, and sticking to [curlys law](https://blog.codinghorror.com/curlys-law-do-one-thing/). 
-By learning how to write your own decorators, you can significantly improve readability of your own code. 
-Decorators can also be used as a great debugging or testing tool. They can change how the function behaves, without needing to actually change the code (such as adding logging lines). 
-Decorators are a fairly common thing in python, familiar to those who use frameworks such as flask or click, but many only know how to use them, but not how to write their own.
+By learning how to write your own decorators, you can significantly improve readability of your own code. They can change how the function behaves, without needing to actually change the code (such as adding logging lines). They are a fairly common tool in python, familiar to those who use frameworks such as flask or click, but many only know how to use them, not how to write their own.
 
 # How it works
 First off, let's show an example of a decorator in python. The following is a very basic example of what a decorator would like like if you were using it.
@@ -23,7 +18,8 @@ def hello():
     print('hello')
 ```
 
-When you define a function in python, that function becomes an object. 
+_When you define a function in python, that function becomes an object._
+
 The function `hello` above is a function object. The `@my_decorator` is actually a function that has the ability to use the `hello` object, and return a different object to the interpreter. The object that the decorator returns, is what becomes known as `hello`. Essentially, it's the same thing as if you were going to write your own normal function, such as: `hello = decorate(hello)`. Decorate is passed the function -- which it can use however it wants -- then returns another object. The decorator has the ability to swallow the function, or return something that is not a function, if it wanted. 
 
 
@@ -35,24 +31,28 @@ def my_decorator(f):
     return 5
 ```
 
-Any function can be used as a decorator. In this example the decorator is passed a function, and returns a different object. It simply swallows the function it is given entirely, and always returns 5. This is a very trivial example, but it's a good example of the capabilities of a decorator. 
+Any function can be used as a decorator. In this example the decorator is passed a function, and returns a different object. It simply swallows the function it is given entirely, and always returns 5. 
 
 ```python
 @my_decorator
 def hello():
     print('hello')
+```
 
+```python
 >>> hello()
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 TypeError: 'int' object is not callable
 'int' object is not callable
-
->>> hello
-5
 ```
 
 Because our decorator is returning an int, and not a `callable`, it can not be called as a function. Remember, the decorator's return value _replaces_ `hello`. 
+
+```python
+>>> hello
+5
+```
 
 In most cases, we want the object our decorator returns, to actually mimic the function we decorated. _This means that the object the decorator returns, needs to be a function itself_. For example, let's say we wanted to simply print every time the function was called, we could write a function that prints that information, then calls the function. But that function would need to be returned by the decorator. This usually leads to function nesting such as:
 
@@ -199,3 +199,26 @@ And use debug logging. Or, you could override the log level:
 def hello():
     print('hello')
 ```
+
+# Logging to the Cloud
+
+Writing your logs to a hosted log aggregation service seriously makes your life easier, so you can focus your time on what’s important.
+
+Disclaimer: I’m a current employee @ Timber. This section is entirely optional, but I sincerely believe that logging to the cloud will make your life easier (and you can try it for completely free).
+
+```bash
+pip install timber
+```
+```python
+import logging
+import timber
+
+logger = logging.getLogger(__name__)
+
+timber_handler = timber.TimberHandler(api_key='...')
+logger.addHandler(timber_handler)
+```
+
+That’s it. All you need to do is get your API key from timber.io, and you’ll be able to see your logs. We automatically capture them from the logging module, so you can continue to log normally, while we seamlessly add context.
+
+![](https://images.ctfassets.net/h6vh38q7qvzk/5BUP5dDcrKae4yyaoy8ocE/ba33ae45edec6325109f05a44407a2e2/footer.png)
