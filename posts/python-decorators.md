@@ -188,7 +188,7 @@ def debug(f=None, *, level='debug'):
 ```
 Now the decorator can work as normal:
 
-```
+```python
 @debug
 def hello():
     print('hello')
@@ -202,7 +202,7 @@ def hello():
 
 # Logging to the Cloud
 
-Writing your logs to a hosted log aggregation service seriously makes your life easier, so you can focus your time on what’s important.
+Writing your logs to a hosted log aggregation service makes your life easier, so you can focus on building better software, not debugging. 
 
 Disclaimer: I’m a current employee @ Timber. This section is entirely optional, but I sincerely believe that logging to the cloud will make your life easier (and you can try it for completely free).
 
@@ -219,6 +219,6 @@ timber_handler = timber.TimberHandler(api_key='...')
 logger.addHandler(timber_handler)
 ```
 
-That’s it. All you need to do is get your API key from timber.io, and you’ll be able to see your logs. We automatically capture them from the logging module, so you can continue to log normally, while we seamlessly add context.
+That’s it. All you need to do is get your API key from timber.io, and you’ll be able to see your logs. We automatically capture them from the logging module (and seamlessly add context), so you can continue to log normally.
 
 ![](https://images.ctfassets.net/h6vh38q7qvzk/5BUP5dDcrKae4yyaoy8ocE/ba33ae45edec6325109f05a44407a2e2/footer.png)
