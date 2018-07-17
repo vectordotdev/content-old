@@ -21,12 +21,14 @@ We'll show you what to do about both these issues.
 It's easy to filter by label.
 
 `http_requests_total{job="prometheus", code="200"}`
+
 `!=` -- not equal
 
 ![](./images/promql-guide/filter-by-label.png)
 
 You can check a substring using regex matching.
 `http_requests_total{status_code=~"2.*"}`
+
 `!~` -- does not regex match
 
 ![](./images/promql-guide/substring.png)
@@ -77,9 +79,11 @@ This tells you how many total HTTP requests there are, but some are obviously mo
 
 `sum by(status_code) (rate(http_requests_total[5m]))`
 
+You can also use `without` rather than `by` to sum on everything not passed as a parameter to without.
+
 ![](./images/promql-guide/sum-by-rate.png)
 
-Now, you can see the difference between each status code. You can also use `without` rather than `by` to sum on everything not passed as a parameter to without.
+Now, you can see the difference between each status code.
 
 ### Offset
 
