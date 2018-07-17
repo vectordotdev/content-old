@@ -1,8 +1,6 @@
 # PromQL for Humans
 
-PromQL is a language that allows you to query Prometheus. Here at Timber, we found it difficult to wrap our head around. This is our attempt at making it a little simpler.
-
-If you're interested, we've written [a great article about our thoughts on Prometheus](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/).
+PromQL is a built in query-language made for Prometheus. Here at Timber, [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/), but PromQL difficult to wrap our head around. This is our attempt to change that.
 
 ## Basics
 
@@ -82,6 +80,14 @@ This tells you how many total HTTP requests there are, but some are obviously mo
 ![](./images/promql-guide/sum-by-rate.png)
 
 Now, you can see the difference between each status code. You can also use `without` rather than `by` to sum on everything not passed as a parameter to without.
+
+### Offset
+
+You can use `offset` to change the time for Instant and Range Vectors. This can be helpful when comparing current to past usage when determining to trigger an alert.
+
+`sum(rate(http_requests_total[5m] offset 5m))`
+
+Remember to put `offset` directly after the selector.
 
 ## Operators
 
