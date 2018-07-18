@@ -1,6 +1,6 @@
 # PromQL for Humans
 
-PromQL is a built in query-language made for Prometheus. Here at Timber [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/) but PromQL difficult to wrap our head around. This is our attempt to change that.
+PromQL is a built in query-language made for Prometheus. Here at Timber [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/), but PromQL difficult to wrap our head around. This is our attempt to change that.
 
 ## Basics
 
@@ -10,28 +10,26 @@ _Only Instant Vectors can be graphed._
 
 `http_requests_total`
 
-_Disclaimer_: We've hidden some of the information in the pictures using the `Legend Format` for privacy reasons.
-
 ![](./images/promql-guide/http_requests_total.png)
 
 This gives us all the http requests, but we've got 2 issues.
 1. There are too many data points to decipher what's going on.
 2. You'll notice that `http_requests_total` only goes up, because it's a [counter](https://prometheus.io/docs/concepts/metric_types/#counter). These are common in Prometheus, but not useful to graph.
 
-We'll show you what to do about both these issues.
+I'll show you how to approach both.
 
 It's easy to filter by label.
 
 `http_requests_total{job="prometheus", code="200"}`
 
-`!=` -- not equal
+`!=` - not equal
 
 ![](./images/promql-guide/filter-by-label.png)
 
 You can check a substring using regex matching.
 `http_requests_total{status_code=~"2.*"}`
 
-`!~` -- does not regex match
+`!~` - does not regex match
 
 ![](./images/promql-guide/substring.png)
 
@@ -124,11 +122,15 @@ You can use `group_left` if the left side has a higher cardinality, else use `gr
 
 ## Before You Go
 
-Just wanted to catch you before you finished reading to let you know we're a cloud-based logging company that's looking to make debugging easier by seamlessly augmenting logs with context. We've got a great product built and you can check it out for free!
+It's important to understand where metrics fit in when it comes to observing your application. I recommend you take a look at at the [3 pillars of observability](https://peter.bourgon.org/blog/2017/02/21/metrics-tracing-and-logging.html) principle.  Metrics are an important part of your observability stack, but _logs_ and tracing are equally so.
+
+Here at Timber, we're a cloud-based logging company that's looking to make logging easier by seamlessly augmenting logs with context. We've got [a great product](https://timber.io/) built and you can check it out for free!
 
 ![](https://images.ctfassets.net/h6vh38q7qvzk/5BUP5dDcrKae4yyaoy8ocE/ba33ae45edec6325109f05a44407a2e2/footer.png)
 
 ## Examples
+
+_Disclaimer_: We've hidden some of the information in the pictures using the `Legend Format` for privacy reasons.
 
 _CPU Usage by Instance_
 
