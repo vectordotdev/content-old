@@ -1,6 +1,6 @@
 # PromQL for Humans
 
-PromQL is a built in query-language made for Prometheus. Here at Timber, [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/), but PromQL difficult to wrap our head around. This is our attempt to change that.
+PromQL is a built in query-language made for Prometheus. Here at Timber [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/) but PromQL difficult to wrap our head around. This is our attempt to change that.
 
 ## Basics
 
@@ -13,8 +13,8 @@ _Only Instant Vectors can be graphed._
 ![](./images/promql-guide/http_requests_total.png)
 
 This gives us all the http requests, but we've got 2 issues.
-1. There are too many data points to decipher what's really going on.
-2. You'll notice that `http_requests_total` only goes up, because it's a counter. These are common in Prometheus, but not useful to graph.
+1. There are too many data points to decipher what's going on.
+2. You'll notice that `http_requests_total` only goes up, because it's a [counter](https://prometheus.io/docs/concepts/metric_types/#counter). These are common in Prometheus, but not useful to graph.
 
 We'll show you what to do about both these issues.
 
@@ -55,7 +55,7 @@ _You'll notice that we're able to graph all these functions. Since only Instant 
 
 ![](./images/promql-guide/rate.png)
 
-`irate(http_requests_total[5m])` looks at the 2 most recent samples (up to 5 minutes in the past), rather than averaging like `rate`. You'll notice this creates a sharp graph, so you shouldn't alert on this. _Alert fatigue is real._
+`irate(http_requests_total[5m])` - looks at the 2 most recent samples (up to 5 minutes in the past), rather than averaging like `rate`. You'll notice this creates a sharp graph, so you shouldn't alert on this. _Alert fatigue is real._
 
 ![](./images/promql-guide/irate.png)
 
@@ -106,11 +106,11 @@ There are Arithmetic (+, -, \*, /, %, ^), Comparison (==, !=, >, <, >=, <=) and 
 Vectors are equal i.f.f. the labels are equal.
 
 API 5xxs have increased by 20% over the past 5m
-`rate(http_requests_total{status_code=~"5.*"}[5m]) > .1 * rate(http_requests_total[5m])`
+`rate(http_requests_total{status_code=~"5.*"}[5m]) > .2 * rate(http_requests_total[5m])`
 
 ![](./images/promql-guide/api5xx.png)
 
-We're looking to graph whenever more than 10% of an instance's HTTP requests are errors. Before comparing rates, PromQL first checks to make sure that the vector's labels are equal.
+We're looking to graph whenever more than 20% of an instance's HTTP requests are errors. Before comparing rates, PromQL first checks to make sure that the vector's labels are equal.
 
 You can use `on` to compare using certain labels or `ignoring` to compare on all labels except.
 
@@ -148,7 +148,7 @@ _Disk Space_
 
 `node_filesystem_avail{fstype!~"tmpfs|fuse.lxcfs|squashfs"} / node_filesystem_size{fstype!~"tmpfs|fuse.lxcfs|squashfs"}`
 
-Percentage of disk space being used by instance.
+Percentage of disk space being used by instance. We're looking for the available space being used by instances that have `tmpfs`, `fuse.lxcfs`, or `squashfs` in their `fstype` and dividing that by their total size.
 
 ![](./images/promql-guide/disk.png)
 
