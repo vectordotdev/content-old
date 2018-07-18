@@ -10,6 +10,8 @@ _Only Instant Vectors can be graphed._
 
 `http_requests_total`
 
+_Disclaimer_: We've hidden some of the information in the pictures using the `Legend Format` for privacy reasons.
+
 ![](./images/promql-guide/http_requests_total.png)
 
 This gives us all the http requests, but we've got 2 issues.
@@ -105,12 +107,12 @@ There are Arithmetic (+, -, \*, /, %, ^), Comparison (==, !=, >, <, >=, <=) and 
 
 Vectors are equal i.f.f. the labels are equal.
 
-API 5xxs have increased by 20% over the past 5m
-`rate(http_requests_total{status_code=~"5.*"}[5m]) > .2 * rate(http_requests_total[5m])`
+API 5xxs are 10% of HTTP Requests
+`rate(http_requests_total{status_code=~"5.*"}[5m]) > .1 * rate(http_requests_total[5m])`
 
 ![](./images/promql-guide/api5xx.png)
 
-We're looking to graph whenever more than 20% of an instance's HTTP requests are errors. Before comparing rates, PromQL first checks to make sure that the vector's labels are equal.
+We're looking to graph whenever more than 10% of an instance's HTTP requests are errors. Before comparing rates, PromQL first checks to make sure that the vector's labels are equal.
 
 You can use `on` to compare using certain labels or `ignoring` to compare on all labels except.
 
