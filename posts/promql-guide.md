@@ -48,7 +48,7 @@ You can also use (s, m, h, d, w, y) to represent (seconds, minutes, hours, ...) 
 
 _You'll notice that we're able to graph all these functions. Since only Instant Vectors can be graphed, they take a Range Vector as a parameter and return a Instant Vector._
 
-`rate(http_requests_total[5m])` - increase of `http_requests_total` averaged over the last 5 minutes. Use this when alerting because it creates a smooth graph.
+`rate(http_requests_total[5m])` - increase of `http_requests_total` averaged over the last 5 minutes.
 
 ![](./images/promql-guide/rate.png)
 
@@ -56,7 +56,7 @@ _You'll notice that we're able to graph all these functions. Since only Instant 
 
 ![](./images/promql-guide/irate.png)
 
-It's best to use `rate` when alerting, because it avoids creating a sharp graph since the data is averaged over a period of time. _Alert fatigue is real._
+It's best to use `rate` when alerting, because it creates a smooth graph since the data is averaged over a period of time. _Spikey graphs can cause alert overload, fatigue, and bad times for all due to repeatedly triggering thresholds._
 
 `increase(http_requests_total[1h])` - # of http requests in the last hour. This is equal to the `rate` * # of seconds.
 
