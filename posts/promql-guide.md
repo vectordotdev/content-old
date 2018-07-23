@@ -18,18 +18,15 @@ This gives us all the http requests, but we've got 2 issues.
 
 I'll show you how to approach both.
 
-It's easy to filter by label.
+**It's easy to filter by label.**
 
 `http_requests_total{job="prometheus", code="200"}`
 
-`!=` - not equal
-
 ![](./images/promql-guide/filter-by-label.png)
 
-You can check a substring using regex matching.
-`http_requests_total{status_code=~"2.*"}`
+**You can check a substring using regex matching.**
 
-`!~` - does not regex match
+`http_requests_total{status_code=~"2.*"}`
 
 ![](./images/promql-guide/substring.png)
 
@@ -55,9 +52,11 @@ _You'll notice that we're able to graph all these functions. Since only Instant 
 
 ![](./images/promql-guide/rate.png)
 
-`irate(http_requests_total[5m])` - looks at the 2 most recent samples (up to 5 minutes in the past), rather than averaging like `rate`. You'll notice this creates a sharp graph, so you shouldn't alert on this. _Alert fatigue is real._
+`irate(http_requests_total[5m])` - looks at the 2 most recent samples (up to 5 minutes in the past), rather than averaging like `rate`.
 
 ![](./images/promql-guide/irate.png)
+
+It's best to use `rate` when alerting, because it avoids creating a sharp graph since the data is averaged over a period of time. _Alert fatigue is real._
 
 `increase(http_requests_total[1h])` - # of http requests in the last hour. This is equal to the `rate` * # of seconds.
 
@@ -67,15 +66,15 @@ These are a small fraction of the functions, just what we found most popular. Yo
 
 ### For Instant Vectors
 
-You'll notice that `rate(http_requests_total[5m])` above provides a ton of data. You can filter that data using your labels, but you can also look at your system as a whole using `sum` (or do both).
+You'll notice that `rate(http_requests_total[5m])` above provides a large amount of data. You can filter that data using your labels, but you can also look at your system as a whole using `sum` (or do both).
 
 `sum(rate(http_requests_total[5m]))`
 
-You can also use `min`, `max`, `avg`, `count`, and `quintile` similarly.
+You can also use `min`, `max`, `avg`, `count`, and `quantile` similarly.
 
 ![](./images/promql-guide/sum-rate.png)
 
-This tells you how many total HTTP requests there are, but some are obviously more indicative than others.
+This query tells you how many total HTTP requests there are, but isn't directly useful in deciphering issues in your system. I'll show you some functions that allow you to gain insight into your system.
 
 `sum by(status_code) (rate(http_requests_total[5m]))`
 
@@ -87,7 +86,7 @@ Now, you can see the difference between each status code.
 
 ### Offset
 
-You can use `offset` to change the time for Instant and Range Vectors. This can be helpful when comparing current to past usage when determining to trigger an alert.
+You can use `offset` to change the time for Instant and Range Vectors. This can be helpful for comparing current usage to past usage when determining the conditions of an alert.
 
 `sum(rate(http_requests_total[5m] offset 5m))`
 
@@ -95,7 +94,7 @@ Remember to put `offset` directly after the selector.
 
 ## Operators
 
-Operators can be used between scalars, vectors, or a mix of the two. Operations between vectors expect to be able to find matching elements for each element on the other side (also known as one-to-one matching), unless otherwise specified.
+Operators can be used between scalars, vectors, or a mix of the two. Operations between vectors expect to find matching elements for each side (also known as one-to-one matching), unless otherwise specified.
 
 There are Arithmetic (+, -, \*, /, %, ^), Comparison (==, !=, >, <, >=, <=) and Logical (and, or, unless) operators.
 
@@ -105,7 +104,8 @@ There are Arithmetic (+, -, \*, /, %, ^), Comparison (==, !=, >, <, >=, <=) and 
 
 Vectors are equal i.f.f. the labels are equal.
 
-API 5xxs are 10% of HTTP Requests
+**API 5xxs are 10% of HTTP Requests**
+
 `rate(http_requests_total{status_code=~"5.*"}[5m]) > .1 * rate(http_requests_total[5m])`
 
 ![](./images/promql-guide/api5xx.png)
@@ -144,11 +144,11 @@ _Disk Space_
 
 `node_filesystem_avail{fstype!~"tmpfs|fuse.lxcfs|squashfs"} / node_filesystem_size{fstype!~"tmpfs|fuse.lxcfs|squashfs"}`
 
-Percentage of disk space being used by instance. We're looking for the available space being used by instances that have `tmpfs`, `fuse.lxcfs`, or `squashfs` in their `fstype` and dividing that by their total size.
+Percentage of disk space being used by instance. We're looking for the available space, ignoring instances that have `tmpfs`, `fuse.lxcfs`, or `squashfs` in their `fstype` and dividing that by their total size.
 
 ![](./images/promql-guide/disk.png)
 
-You can find more great examples [here](https://github.com/infinityworks/prometheus-example-queries).
+You can find more useful examples [here](https://github.com/infinityworks/prometheus-example-queries).
 
 ## 3 Pillars of Observability
 
