@@ -1,6 +1,6 @@
 # PromQL for Humans
 
-PromQL is a built in query-language made for Prometheus. Here at Timber [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/), but PromQL difficult to wrap our head around. This is our attempt to change that.
+PromQL is a built in query-language made for Prometheus. Here at Timber [we've found Prometheus to be awesome](https://timber.io/blog/prometheus-the-good-the-bad-and-the-ugly/), but PromQL difficult to wrap our heads around. This is our attempt to change that.
 
 ## Basics
 
@@ -75,7 +75,7 @@ You can also use `min`, `max`, `avg`, `count`, and `quintile` similarly.
 
 ![](./images/promql-guide/sum-rate.png)
 
-This tells you how many total HTTP requests there are, but some are obviously more indicative of others.
+This tells you how many total HTTP requests there are, but some are obviously more indicative than others.
 
 `sum by(status_code) (rate(http_requests_total[5m]))`
 
@@ -120,14 +120,6 @@ It's possible to use comparison and arithmetic operations where an element on on
 
 You can use `group_left` if the left side has a higher cardinality, else use `group_right`.
 
-## Before You Go
-
-It's important to understand where metrics fit in when it comes to observing your application. I recommend you take a look at at the [3 pillars of observability](https://peter.bourgon.org/blog/2017/02/21/metrics-tracing-and-logging.html) principle.  Metrics are an important part of your observability stack, but _logs_ and tracing are equally so.
-
-Here at Timber, we're a cloud-based logging company that's looking to make logging easier by seamlessly augmenting logs with context. We've got [a great product](https://timber.io/) built and you can check it out for free!
-
-![](https://images.ctfassets.net/h6vh38q7qvzk/5BUP5dDcrKae4yyaoy8ocE/ba33ae45edec6325109f05a44407a2e2/footer.png)
-
 ## Examples
 
 _Disclaimer_: We've hidden some of the information in the pictures using the `Legend Format` for privacy reasons.
@@ -157,3 +149,11 @@ Percentage of disk space being used by instance. We're looking for the available
 ![](./images/promql-guide/disk.png)
 
 You can find more great examples [here](https://github.com/infinityworks/prometheus-example-queries).
+
+## 3 Pillars of Observability
+
+It's important to understand where metrics fit in when it comes to observing your application. I recommend you take a look at at the [3 pillars of observability](https://peter.bourgon.org/blog/2017/02/21/metrics-tracing-and-logging.html) principle.  Metrics are an important part of your observability stack, but _logs_ and tracing are equally so.
+
+Here at Timber, we're a cloud-based logging company that's looking to make logging easier by seamlessly augmenting logs with context. We've got [a great product](https://timber.io/) built and you can check it out for free!
+
+![](https://images.ctfassets.net/h6vh38q7qvzk/5BUP5dDcrKae4yyaoy8ocE/ba33ae45edec6325109f05a44407a2e2/footer.png)
