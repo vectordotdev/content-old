@@ -152,8 +152,8 @@ You can find more great examples [here](https://github.com/infinityworks/prometh
 
 ## 3 Pillars of Observability
 
-It's important to understand where metrics fit in when it comes to observing your application. I recommend you take a look at at the [3 pillars of observability](https://peter.bourgon.org/blog/2017/02/21/metrics-tracing-and-logging.html) principle.  Metrics are an important part of your observability stack, but _logs_ and tracing are equally so.
+It's important to understand where metrics fit in when it comes to observing your application. I recommend you take a look at the [3 pillars of observability](https://peter.bourgon.org/blog/2017/02/21/metrics-tracing-and-logging.html) principle.  Metrics are an important part of your observability stack, but _logs_ and tracing are equally so.
 
-Here at Timber, we're a cloud-based logging company that's looking to make logging easier by seamlessly augmenting logs with context. We've got [a great product](https://timber.io/) built and you can check it out for free!
+Here at Timber, we're a cloud-based logging company that's looking to make logging easier by seamlessly augmenting logs with context. We've got [a great product](https://timber.io/) built, and you can check it out for free!
 
 ![](https://images.ctfassets.net/h6vh38q7qvzk/5BUP5dDcrKae4yyaoy8ocE/ba33ae45edec6325109f05a44407a2e2/footer.png)
