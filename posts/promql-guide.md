@@ -128,7 +128,7 @@ _CPU Usage by Instance_
 
 `100 * (1 - avg by(instance)(irate(node_cpu{mode='idle'}[5m])))`
 
-This provides the average CPU Usage per instance for a 5 minute window.
+Average CPU Usage per instance for a 5 minute window.
 
 ![](./images/promql-guide/cpu.png)
 
