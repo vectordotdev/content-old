@@ -124,7 +124,7 @@ You can use `group_left` if the left side has a higher cardinality, else use `gr
 
 _Disclaimer_: We've hidden some of the information in the pictures using the `Legend Format` for privacy reasons.
 
-_CPU Usage by Instance_
+#### CPU Usage by Instance
 
 `100 * (1 - avg by(instance)(irate(node_cpu{mode='idle'}[5m])))`
 
@@ -132,7 +132,7 @@ Average CPU Usage per instance for a 5 minute window.
 
 ![](./images/promql-guide/cpu.png)
 
-_Memory Usage_
+#### Memory Usage
 
 `node_memory_Active / on (instance) node_memory_MemTotal`
 
@@ -140,13 +140,25 @@ Percentage of memory being used by instance.
 
 ![](./images/promql-guide/memory.png)
 
-_Disk Space_
+#### Disk Space
 
 `node_filesystem_avail{fstype!~"tmpfs|fuse.lxcfs|squashfs"} / node_filesystem_size{fstype!~"tmpfs|fuse.lxcfs|squashfs"}`
 
 Percentage of disk space being used by instance. We're looking for the available space, ignoring instances that have `tmpfs`, `fuse.lxcfs`, or `squashfs` in their `fstype` and dividing that by their total size.
 
 ![](./images/promql-guide/disk.png)
+
+#### HTTP Error Rates as a % of Traffic
+
+`rate(http_requests_total{status_code=~"5.*"}[5m]) / rate(http_requests_total[5m])`
+
+![](./images/promql-guide/http_error_rates.png)
+
+#### Alerts Firing in the last 24 hours
+
+`sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)`
+
+![](./images/promql-guide/alerts_firing.png)
 
 You can find more useful examples [here](https://github.com/infinityworks/prometheus-example-queries).
 
