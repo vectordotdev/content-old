@@ -4,13 +4,11 @@ author: Divyanshu Tomar
 ---
 # Running background tasks in Python using task queues
 
-Let's say we have an e-commerce website where users can place orders for various products. Now there's a business requirement of finding out the kind of orders being placed and the most in-demand product in real-time. Also, for every order placed, the buyer should be conveyed of the confirmation of the order via an email or notification through a messaging service. In this case,if we process the order information on the same REST API service handling product requests, it may lead to significant problems. The API service may not able to respond in a short time as it can be blocked on the external services like the messaging service. This synchronous model worsens with a high number of orders being placed in a short span of time as the service may be preoccupied processing previous requests. Thus, these compute-intensive time-taking tasks like processing of orders on an e-commerce platform require an asynchronous approach.
+Any compute-intensive time-taking task whose execution is not feasible in the same process where the request for the task is received can be called a _background task_. One such example is of post-order processing on e-commerce platforms which may consist of tasks like sending a confirmation of the order to the buyer through messaging service or doing some data analysis. These tasks cannot be executed on the same process where the order is placed as it may take considerable time to complete a single order. This calls for an asynchronous strategy which uses queues for maintaining a list of background tasks to be executed. 
 
-The execution of such tasks or jobs can be performed in the background by another process spawned for the sole purpose. These processes are usually called _workers_. They run concurrently with the main process (web server in our case) handling client requests. To list all the tasks which need to be executed, a job/task queue is maintained to store tasks along with its metadata created by incoming requests on the web server. The worker process then executes these tasks chronologically. This modular approach makes it easier for the web server to accommodate execution of such long-running tasks as it will not get blocked itself in doing so. This also means that the web server can respond to forthcoming client requests.
+_Workers_ can be used to execute these tasks in the background. They run concurrently in the background along with the main process and executes the tasks present in queues chronologically. This modular approach prevents the web server or the main process from being blocked from responding to incoming client requests.
 
 ![architectire of web server and queue](./images/running-background-tasks-python/small-archi.png)
-
-Task or message queues are quite popular among microservices architecture. They enable each microservice to perform its dedicated task and work as a medium for inter-microservice communication. These queues store messages or data incoming from _producer_ microservices which can be processed or consumed by _consumer_ microservices. In the e-commerce example above, the REST API handling orders is a producer microservice which pushes these orders to the queue. Whereas, a data analysis microservice determining the kind of orders being placed or the messaging service can be considered a consumer microservice.
 
 ## Queueing frameworks to the rescue
 
@@ -33,7 +31,9 @@ There are many other queueing frameworks or services available. Refer [queues.io
 
 ## Real World Application
 
-We will be writing a flask-based web application which retrieves _Goodreads_ book information like title, author, rating and description. The web server exposes an endpoint that accepts book URLs. A function will crawl and parse this URL  for meta information of the book. As this function will take time to execute and may lead to blocking of the main thread, we will execute it asynchronously by pushing it to Redis queue (RQ). RQ allows us to enqueue multiple function calls to a queue which can be executed parallelly by a separate worker process. It requires Redis server as a message broker for performing this operation. Let's get into the code and learn how we can use Redis queue in our web applications.
+We will be writing a flask-based web application which retrieves _Goodreads_ book information like title, author, rating and description. The web server exposes an endpoint that accepts book URLs. A function will crawl and parse this URL  for meta information of the book. As this function will take time to execute and may lead to blocking of the main thread, we will execute it asynchronously by pushing it to Redis queue (RQ).
+
+RQ allows us to enqueue multiple function calls to a queue which can be executed parallelly by a separate worker process. It requires Redis server as a message broker for performing this operation. Let's get into the code and learn how we can use Redis queue in our web applications.
 
 For bootstrapping the development and avoiding the hassles of setting up the project from scratch, you can use the starter repo here to follow along. This starter application requires Docker to be installed on your machine. To do so, you can head out [here](https://www.docker.com/community-edition) and install the relevant version depending upon your environment.
 
@@ -76,28 +76,40 @@ def parse_book_link_for_meta_data(bookLink):
   return dict(title=title.strip() if title else '',author=author.strip() if author else '',rating=float(rating.strip() if rating else 0),description=description)
 ```
 
-We can now write a function called `parse_and_persist_book_info` that calls the above parsing function and persists the value to Redis so that it can be retrieved later. This function along with its arguments will be pushed to queue so that the worker process can execute it. Redis is a key-value store where the key should be unique else it may lead to overwriting of a previous value. Here `generate_redis_key_for_book` is a function that generates a unique key for a given book URL.
+We can now write a function called `parse_and_persist_book_info` that calls the above parsing function and persists the value to Redis so that it can be retrieved later. This function along with its arguments will be pushed to queue so that the worker process can execute it.
+
+Redis is a key-value store where the key should be unique else it may lead to overwriting of a previous value. Here `generate_redis_key_for_book` is a function that generates a unique key for a given book URL.
 
 ```python
 # server.py
 import pickle
 
+# Spawn a client connection to redis server. Here Docker
+# provieds a link to our local redis server usinf 'redis'
+redisClient = Redis(host='redis')
+
 #........
 #........
 
 # This generates a unique Redis key against a book URL
+# Eg: For URL "https://www.goodreads.com/book/show/6519813-the-private-papers-of-eastern-jewel" , this lambda function
+# will return the key as "GOODREADS_BOOKS_INFO:https://www.goodreads.com/book/show/6519813-the-private-papers-of-eastern-jewel"
 generate_redis_key_for_book = lambda bookURL: 'GOODREADS_BOOKS_INFO:' + bookURL
 
 def parse_and_persist_book_info(bookUrl):
-  redisKey = generate_redis_key_for_book(bookUrl) # get Redis key for given book URL 
-  bookInfo  = parse_book_link_for_meta_data(bookUrl) # get book meta information from parsing function above
-  # Set the value to Redis. Here pickle serializes the dictionary
+  redisKey = generate_redis_key_for_book(bookUrl) # get Redis key for given book URL
+  # get book meta information from parsing function above. The function
+  # returns a python dictionary.
+  bookInfo  = parse_book_link_for_meta_data(bookUrl) 
+  # Here pickle module is used to serialize python objects.
+  # We use pickle.dumps method to convert the dictionary into a byte stream
+  # which can be stored as a value in Redis against the key generated above
   redisClient.set(redisKey,pickle.dumps(bookInfo))
 ```
 
 ### The endpoint for accepting URLs
 
-Let's set up an endpoint that will accept a list of valid Goodreads book URLs. This is going to support POST method with URLs accepted as an array in _application/json_ body format. For validating the Goodreads book URLs we check for unique occurrences of URLs which starts with the string `https://www.goodreads.com/book/show/`. After the validation check, all valid URLs are pushed to Redis queue for parsing information. Here the method `enqueue_call` of Redis queue instance takes in a function that will be executed by worker process along with required arguments of the function.
+For validating the Goodreads book URLs we check for unique occurrences of URLs which starts with the string `https://www.goodreads.com/book/show/`. After the validation check, all valid URLs are pushed to Redis queue for parsing information. Here the method `enqueue_call` of Redis queue instance takes in a function that will be executed by worker process along with required arguments of the function.
 
 ```python
 # server.py
@@ -179,7 +191,11 @@ You can view the full code [here](https://github.com/divyanshutomar/flask-task-q
 
 ## Conclusion and Takeaways
 
-The above application demonstrates how queuing frameworks like Redis Queue can be leveraged for solving problems which demands an asynchronous approach. This also brings modularity to the table, making it possible to extend the functionality of your service later on. Following are some of the key takeaways you can follow to tackle similar problems:
+The above application demonstrates how queuing frameworks like Redis Queue can be leveraged for solving problems which demands an asynchronous approach. This also brings modularity to the table, making it possible to extend the functionality of your service later on.
+
+Task or message queues are quite popular among microservices architecture. They enable each microservice to perform its dedicated task and work as a medium for inter-microservice communication. These queues store messages or data incoming from _producer_ microservices which can be processed or consumed by _consumer_ microservices. In the introductory e-commerce example above, the REST API handling orders is a producer microservice which pushes these orders to the queue. Whereas, a data analysis microservice or the messaging service can be considered a consumer microservice.
+
+Following are some of the key takeaways you can follow to tackle similar problems:
 * Queueing frameworks allow more granular control over scaling of different processes. More worker processes can be spawned if there is an accumulation of a large number of tasks in the queue.
 * Multiple queues can be used for handling different type of tasks.
 * Every task can send some meta information about its status or progress so far to Redis. This information can be useful for getting an insight into a task that runs for a long duration.
