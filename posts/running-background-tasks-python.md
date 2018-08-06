@@ -10,24 +10,7 @@ _Workers_ can be used to execute these tasks in the background. They run concurr
 
 ![architectire of web server and queue](./images/running-background-tasks-python/small-archi.png)
 
-## Queueing frameworks to the rescue
-
-Let's have a look at some of the popular job queuing frameworks.
-
-### [Celery](http://www.celeryproject.org/)
-
-This is undoubtedly one of the most popular tasks queuing frameworks in Python. It has a wide community support and it is recommended for high-velocity production applications. It offers both asynchronous and synchronous mode with support of multiple worker processes. RabbitMQ, Redis, Beanstalk are some of the message brokers supported.
-
-### [AWS SQS](https://aws.amazon.com/sqs/)
-
-Amazon Web Services (AWS) provides a fully managed queuing service called Simple Queueing Service. It can be readily used with any existing application without the need for deploying or managing the queuing service. AWS provides SDKs for many popular languages making it a language agnostic solution. It has recently got the support of AWS lambda functions which makes it suitable for a serverless architecture. Now a lambda function can execute the tasks present in SQS, acting as a worker.
-
-### [Redis Queue](http://python-rq.org/)
-
-Redis Queue (RQ) is a python library which implements a simple job queue using Redis. It's a lightweight alternative that derives the good parts from existing queueing frameworks. A single worker process can be pointed to many queues to execute the tasks. We will be using this in the following application for its simplicity.
-
-
-There are many other queueing frameworks or services available. Refer [queues.io](http://queues.io/) to discover more.
+Task or message queues are quite popular among microservices architecture. They enable each microservice to perform its dedicated task and work as a medium for inter-microservice communication. These queues store messages or data incoming from _producer_ microservices which can be processed or consumed by _consumer_ microservices. In the introductory e-commerce example above, the REST API handling orders is a producer microservice which pushes these orders to the queue. Whereas, a data analysis microservice or the messaging service can be considered a consumer microservice.
 
 ## Real World Application
 
@@ -193,9 +176,22 @@ You can view the full code [here](https://github.com/divyanshutomar/flask-task-q
 
 The above application demonstrates how queuing frameworks like Redis Queue can be leveraged for solving problems which demands an asynchronous approach. This also brings modularity to the table, making it possible to extend the functionality of your service later on.
 
-Task or message queues are quite popular among microservices architecture. They enable each microservice to perform its dedicated task and work as a medium for inter-microservice communication. These queues store messages or data incoming from _producer_ microservices which can be processed or consumed by _consumer_ microservices. In the introductory e-commerce example above, the REST API handling orders is a producer microservice which pushes these orders to the queue. Whereas, a data analysis microservice or the messaging service can be considered a consumer microservice.
 
 Following are some of the key takeaways you can follow to tackle similar problems:
 * Queueing frameworks allow more granular control over scaling of different processes. More worker processes can be spawned if there is an accumulation of a large number of tasks in the queue.
 * Multiple queues can be used for handling different type of tasks.
 * Every task can send some meta information about its status or progress so far to Redis. This information can be useful for getting an insight into a task that runs for a long duration.
+
+## Other Frameworks
+
+Here are a couple other task-queing frameworks if you're not interested in using Redis Queues.
+
+### [Celery](http://www.celeryproject.org/)
+
+This is undoubtedly one of the most popular tasks queuing frameworks in Python. It has a wide community support and it is recommended for high-velocity production applications. It offers both asynchronous and synchronous mode with support of multiple worker processes. RabbitMQ, Redis, Beanstalk are some of the message brokers supported.
+
+### [AWS SQS](https://aws.amazon.com/sqs/)
+
+Amazon Web Services (AWS) provides a fully managed queuing service called Simple Queueing Service. It can be readily used with any existing application without the need for deploying or managing the queuing service. AWS provides SDKs for many popular languages making it a language agnostic solution. It has recently got the support of AWS lambda functions which makes it suitable for a serverless architecture. Now a lambda function can execute the tasks present in SQS, acting as a worker.
+
+There are many other queueing frameworks or services available. Refer [queues.io](http://queues.io/) to discover more.
