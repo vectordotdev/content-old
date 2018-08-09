@@ -4,21 +4,21 @@ author: Divyanshu Tomar
 ---
 # Running background tasks in Python using task queues
 
-By nature, Python is a linear language. It's often not feasible to execute a process when the request for the process is received (especially when dealing with I/O) to prevent the thread from blocking incoming client requests. This requires an asynchronous strategy which uses queues to maintain a list of background tasks.
+By nature, Python is a linear language. It's often not feasible to execute a process when the request is received (especially when dealing with I/O) to prevent the thread from blocking incoming client requests. This requires an asynchronous strategy which uses queues to maintain a list of background tasks.
 
-_Workers_ can be used to execute these tasks in the background. They run concurrently in the background along with the main process and executes the tasks present in the queue chronologically. This modular approach prevents the web server or main process from becoming blocked.
+_Workers_ can be used to execute these tasks in the background. They run concurrently with the main process and execute the tasks present in the queue chronologically. This modular approach prevents the main process from becoming blocked.
 
 ![architectire of web server and queue](./images/running-background-tasks-python/small-archi.png)
 
-Task queues are popular among microservices architecture because they enable each microservice to perform its dedicated task and work as a medium for inter-microservice communication. These queues store messages or data incoming from _producer_ microservices which can be processed or consumed by _consumer_ microservices. 
+Task queues are popular among microservice architectures because they enable each microservice to perform its dedicated task and they work as a medium for inter-microservice communication. These queues store messages or data incoming from _producer_ microservices which can be processed by _consumer_ microservices. 
 
-_This is a guest post brought to you by your friends @ Timber. If you're interested in writing for us, reach out [on Twitter](https://twitter.com/timberdotio)._
+_This is a guest post brought to you by your friends @ Timber. Though our product doesn't have anything to do with task queues, we're a company that is trying to reinvent logging. You should [check us out](https://timber.io/)._
 
 ## Real World Application
 
 We will be writing a flask-based web application which retrieves _Goodreads_ book information like title, author, rating, and description. We'll write a function to crawl and parse the URL for the book's meta information. Since the function will take time to execute, we'll execute it asynchronously using Redis Queues (RQ) to prevent it from blocking the main thread.
 
-RQ allows us to enqueue function calls to a queue which can be executed in parallel by separate worker processes. They require a Redis server as a message broker to perform this operation. 
+Redis Queue's allow you to enqueue function calls which can be executed in parallel by separate worker processes. They require a Redis server as a message broker to perform this operation. 
 
 You can use the starter repo here to follow along. It requires Docker to be installed on your machine. you can head out [here](https://www.docker.com/community-edition) and install the relevant version.
 
